@@ -2,32 +2,39 @@ class TransitionCore {
   private transitionMap: Map<string, TransitionGroup> = new Map()
   private stateList: Set<string> = new Set()
   private transitionMethods: Map<string, string[]> = new Map()
+  private _state:string = null
   constructor(
     public transitionGroups: TransitionGroup[],
-    public state: string
+    public initState: string
   ) {
+    this._state = initState
     this.transitionGroups.forEach(e => {
-      let key = `${e.from}/${e.method}`
+      let key = `${e.from}/${e.action}`
       if (this.transitionMap.has(key))
         throw new Error(
           `From ${e.from} to ${
             typeof e.to === 'function' ? e.to() : e.to
-          } with ${e.method} has repeated declarative`
+          } with ${e.action} has repeated declarative`
         )
-      this.transitionMap.set(`${e.from}/${e.method}`, Object.freeze(e))
-      this.stateList.has(e.from) && this.stateList.add(e.from)
+      this.transitionMap.set(`${e.from}/${e.action}`, Object.freeze(e))
+      !this.stateList.has(e.from) && e.from !== '*' && this.stateList.add(e.from)
       this.transitionMethods.has(e.from)
-        ? this.transitionMethods.get(e.from).push(e.method)
-        : this.transitionMethods.set(e.from, [e.method])
+        ? this.transitionMethods.get(e.from).push(e.action)
+        : this.transitionMethods.set(e.from, [e.action])
       typeof e.to === 'string' &&
         !this.stateList.has(e.to) &&
         this.stateList.add(e.to)
     })
+
+    this.stepTo = this.stepTo.bind(this)
+    this.getMethods = this.getMethods.bind(this)
+    this.getStates = this.getStates.bind(this)
+    this.stateOnTransition = this.stateOnTransition.bind(this)
   }
 
-  stepTo = (method: string, ...arg: any) => {
-    let prevState = this.state
-    let key = `${this.state}/${method}`
+  stepTo (method: string, ...arg: any) {
+    let prevState = this._state
+    let key = `${this._state}/${method}`
     if (this.transitionMap.has(`*/${method}`)) {
       key = `*/${method}`
     } else if (!this.transitionMap.has(key)) {
@@ -50,23 +57,27 @@ class TransitionCore {
     }
   }
 
-  getMethods(state: string = this.state) {
+  getMethods(state: string = this._state) {
     return this.transitionMethods.get(state)
   }
 
-  getState() {
+  getStates() {
     let list = []
     this.stateList.forEach(e => list.push(e))
     return list
   }
 
+  get state () {
+    return this._state
+  }
+
   stateOnTransition(e: TransitionGroup, ...arg) {
     let to = typeof e.to === 'function' ? e.to(...arg) : e.to
     if (this.stateList.has(to)) {
-      this.state = to
+      this._state = to
       return {
         before: e.from,
-        on: this.state,
+        on: this._state,
         arg
       }
     } else {

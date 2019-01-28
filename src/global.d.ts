@@ -11,12 +11,7 @@ declare interface TransitionGroup {
   guardian?: (...arg: any) => boolean | ((...arg: any) => Promise<boolean>)
   from: string
   to: string | ((...arg: any) => string)
-  method: string
-}
-
-declare interface History {
-  maxLength: number
-  stack: []
+  action: string
 }
 
 declare interface EventData {
