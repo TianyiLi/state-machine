@@ -25,31 +25,36 @@ class TransitionCore {
     })
   }
 
-  stepTo = (methods: string, ...arg: any) => {
-    const key = `${this.state}/${methods}`
-    if (!this.transitionMap.has(key)) {
-      console.error(`Cannot transition with ${methods}`)
+  stepTo = (method: string, ...arg: any) => {
+    let prevState = this.state
+    let key = `${this.state}/${method}`
+    if (this.transitionMap.has(`*/${method}`)) {
+      key = `*/${method}`
+    } else if (!this.transitionMap.has(key)) {
+      console.error(`Cannot transition with ${method}`)
       return false
     }
-    const group = this.transitionMap.get(key)
+    const group = Object.assign({}, this.transitionMap.get(key))
     let guardian = group.guardian ? group.guardian(...arg) : true
     if (guardian instanceof Promise) {
       return guardian.then(res => {
+        group.from = prevState
         if (res === true) return this.stateOnTransition(group, ...arg)
         else return false
       })
     } else if (guardian) {
+      group.from = prevState
       return this.stateOnTransition(group, ...arg)
     } else {
       return false
     }
   }
 
-  getMethods (state:string = this.state) {
+  getMethods(state: string = this.state) {
     return this.transitionMethods.get(state)
   }
 
-  getState () {
+  getState() {
     let list = []
     this.stateList.forEach(e => list.push(e))
     return list

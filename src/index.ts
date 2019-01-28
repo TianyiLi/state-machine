@@ -2,13 +2,17 @@ import TransitionCore from './transition-core'
 import History from './history'
 
 class StateMachine {
-  public transitions:TransitionCore
+  public transitions: TransitionCore
   public currentState: string
-  public hookMap:Map<string, Function[]> = new Map()
-  public history:History
+  public hookMap: Map<string, Function[]> = new Map()
+  public history: History
+  public isPending = false
 
-  constructor (public options: Options) {
-    this.transitions = new TransitionCore(options.transitions, options.initState)
+  constructor(public options: Options) {
+    this.transitions = new TransitionCore(
+      options.transitions,
+      options.initState
+    )
     this.step = this.step.bind(this)
     this.on = this.on.bind(this)
     if (this.options.useHistory) {
@@ -16,7 +20,7 @@ class StateMachine {
     }
   }
 
-  on (event:string, fn: (arg?:any) => void ) {
+  on(event: string, fn: (arg?: any) => void) {
     if (this.hookMap.has(event)) {
       this.hookMap.get(event).push(fn)
     } else {
@@ -24,40 +28,45 @@ class StateMachine {
     }
   }
 
-  clearHook (event:string) {
+  clearHook(event: string) {
     this.hookMap.delete(event)
   }
 
-  getMethods (state: string) {
+  getMethods(state: string) {
     return this.transitions.getMethods(state)
   }
 
-  getStateList () {
+  getStateList() {
     return this.transitions.getState()
   }
 
-  getState () {
+  getState() {
     return this.transitions.state
   }
 
-  step (method: string, ...args) {
+  step(method: string, ...args) {
     let result = this.transitions.stepTo(method, ...args)
+    if (this.isPending === true) return false
+    this.isPending = true
     if (result instanceof Promise) {
-      return result.then(result => {
-        if (!result) {
-          return result
+      return result.then(async _result => {
+        if (!_result) {
+          this.isPending = false
+          return _result
         } else {
           if (typeof this.options.onTransition === 'function') {
-            this.options.onTransition(result)
+            this.options.onTransition(_result)
           }
-          let fn = this.hookMap.get(result.on)
+          let fn = this.hookMap.get(_result.on)
           if (fn) {
-            fn.forEach(f => f(...args))
+            await Promise.resolve(fn.map(f => () => f(...args)))
           }
+          this.isPending = false
         }
       })
     } else {
       if (!result) {
+        this.isPending = false
         return result
       } else {
         if (typeof this.options.onTransition === 'function') {
@@ -65,14 +74,23 @@ class StateMachine {
         }
         let fn = this.hookMap.get(result.on)
         if (fn) {
-          fn.forEach(f => f(...args))
+          let isPromise = fn.some(f => f instanceof Promise)
+          if (isPromise) {
+            return Promise.resolve(fn.map(f => () => f(...args)))
+          } else {
+            fn.forEach(f => f(...args))
+          }
         }
+        this.isPending = false
       }
     }
   }
 
-  getHistory () {
+  getHistory() {
     return this.history
+  }
+  can(method: string) {
+    return !!~this.transitions.getMethods().indexOf(method)
   }
 }
 

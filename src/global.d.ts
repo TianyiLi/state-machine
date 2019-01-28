@@ -1,6 +1,6 @@
 declare interface Options {
   transitions: TransitionGroup[]
-  onTransition?: (EventData: EventData) => void
+  onTransition?: (EventData: EventData) => (void | Promise<void>)
   initState: string
   /** default is 300 */
   historyMaxLength?: number
