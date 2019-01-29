@@ -1,4 +1,4 @@
-class TransitionCore {
+export class TransitionCore {
   private transitionMap: Map<string, TransitionGroup> = new Map()
   private stateList: Set<string> = new Set()
   private transitionMethods: Map<string, string[]> = new Map()
@@ -86,4 +86,9 @@ class TransitionCore {
   }
 }
 
-export default TransitionCore
+export declare interface TransitionGroup {
+  guardian?: (...arg: any) => boolean | ((...arg: any) => Promise<boolean>)
+  from: string
+  to: string | ((...arg: any) => string)
+  action: string
+}

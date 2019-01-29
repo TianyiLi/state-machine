@@ -1,14 +1,17 @@
 {
   "name": "state-machine",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/lib.js",
   "license": "MIT",
   "scripts": {
     "test": "mocha",
     "test-coverage": "nyc --reporter=html --reporter=text mocha",
     "build-dev": "cross-env NODE_ENV=development webpack",
-    "build-prod": "cross-env NODE_ENV=production webpack"
+    "build-prod": "cross-env NODE_ENV=production webpack",
+    "build-esm": "cross-env NODE_ENV=production tsc -m commonjs --outDir lib-esm",
+    "clean": "shx rm -rf dist types"
   },
+  "types": "types/index.d.ts",
   "nyc": {
     "include": [
       "src/**/*.ts"
@@ -28,16 +31,17 @@
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",
-    "@types/node": "^10.12.18",
-    "expose-loader": "^0.7.5",
+    "@types/node": "^10.12.19",
+    "awesome-typescript-loader": "^5.2.1",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
     "source-map-support": "^0.5.10",
-    "ts-loader": "^5.3.3",
     "ts-node": "^8.0.1",
     "typescript": "^3.2.4",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "ts-loader": "^5.3.3"
+  }
 }

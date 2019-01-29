@@ -1,6 +1,18 @@
-import TransitionCore from './transition-core'
+import { TransitionCore, TransitionGroup } from './transition-core'
 
-class StateMachine {
+declare interface Options {
+  transitions: TransitionGroup[]
+  onTransition?: (EventData: EventData) => (void | Promise<void>)
+  initState: string
+}
+
+declare interface EventData {
+  before: string
+  on: string
+  arg: any
+}
+
+export default class StateMachineControl {
   public transitions: TransitionCore
   public currentState: string
   public onStateMap: Map<string, Function[]> = new Map()
@@ -122,5 +134,3 @@ class StateMachine {
     return !!~this.transitions.getMethods().indexOf(method)
   }
 }
-
-export default StateMachine

@@ -1,3 +1,7 @@
-import StateMachine from './state-machine'
+import StateMachineControl from './state-machine'
 
-module.exports = StateMachine
+export default StateMachineControl
+
+export {
+  StateMachineControl
+}

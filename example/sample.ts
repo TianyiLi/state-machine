@@ -1,6 +1,6 @@
-import StateMachine from '../src/state-machine'
+import {StateMachineControl} from '../src/'
 
-let smc = new StateMachine({
+let smc = new StateMachineControl({
   onTransition: console.dir,
   initState: 'none',
   transitions: [

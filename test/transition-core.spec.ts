@@ -1,7 +1,7 @@
 import 'mocha'
 import * as assert from 'assert'
 
-import TransitionCore from '../src/transition-core'
+import { TransitionCore } from '../src/transition-core'
 
 function sleep(sec) {
   return new Promise((resolve, reject) => {
@@ -61,20 +61,26 @@ describe('Transition core test', () => {
       assert.equal(tc.stepTo('next'), false)
     })
     it('repeated method and from should throw error', () => {
-      assert.throws(() => new TransitionCore(
-        [
-          { from: 'none', to: 'a', action: 'start' },
-          { from: 'none', to: 'qq', action: 'start' }
-        ],
-        'none'
-      ))
-      assert.throws(() => new TransitionCore(
-        [
-          { from: 'none', to: 'a', action: 'start' },
-          { from: 'none', to: () => 'qq', action: 'start' }
-        ],
-        'none'
-      ))
+      assert.throws(
+        () =>
+          new TransitionCore(
+            [
+              { from: 'none', to: 'a', action: 'start' },
+              { from: 'none', to: 'qq', action: 'start' }
+            ],
+            'none'
+          )
+      )
+      assert.throws(
+        () =>
+          new TransitionCore(
+            [
+              { from: 'none', to: 'a', action: 'start' },
+              { from: 'none', to: () => 'qq', action: 'start' }
+            ],
+            'none'
+          )
+      )
     })
     it('method start should be work', () => {
       let tc = createTc()
@@ -85,7 +91,7 @@ describe('Transition core test', () => {
       })
       assert.equal(tc.state, 'a')
     })
-    it ('custom to should still in state list', () => {
+    it('custom to should still in state list', () => {
       let tc = createTc()
       assert.equal(tc.stepTo('goto', 'Cannot achive'), false)
     })
