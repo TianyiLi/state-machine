@@ -1,8 +1,9 @@
+import { afterTransitionEvent } from './state-machine'
 export class TransitionCore {
   private transitionMap: Map<string, TransitionGroup> = new Map()
   private stateList: Set<string> = new Set()
   private transitionMethods: Map<string, string[]> = new Map()
-  private _state:string = null
+  private _state: string = null
   constructor(
     public transitionGroups: TransitionGroup[],
     public initState: string
@@ -17,7 +18,9 @@ export class TransitionCore {
           } with ${e.action} has repeated declarative`
         )
       this.transitionMap.set(`${e.from}/${e.action}`, Object.freeze(e))
-      !this.stateList.has(e.from) && e.from !== '*' && this.stateList.add(e.from)
+      !this.stateList.has(e.from) &&
+        e.from !== '*' &&
+        this.stateList.add(e.from)
       this.transitionMethods.has(e.from)
         ? this.transitionMethods.get(e.from).push(e.action)
         : this.transitionMethods.set(e.from, [e.action])
@@ -32,7 +35,7 @@ export class TransitionCore {
     this.stateOnTransition = this.stateOnTransition.bind(this)
   }
 
-  stepTo (method: string, ...arg: any) {
+  stepTo(method: string, ...arg: any): afterTransitionEvent | Promise<afterTransitionEvent> {
     let prevState = this._state
     let key = `${this._state}/${method}`
     if (this.transitionMap.has(`*/${method}`)) {
@@ -67,7 +70,7 @@ export class TransitionCore {
     return list
   }
 
-  get state () {
+  get state() {
     return this._state
   }
 

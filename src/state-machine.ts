@@ -1,16 +1,24 @@
 import { TransitionCore, TransitionGroup } from './transition-core'
 
-declare interface Options {
+export type TransitionFunction =
+  | ((EventData: EventData) => void | Promise<void>)
+  | { [x: string]: (EventData: EventData) => void | Promise<void> }
+
+export declare interface Options {
   transitions: TransitionGroup[]
-  onTransition?: (EventData: EventData) => (void | Promise<void>)
+  onTransition?: TransitionFunction
   initState: string
 }
 
-declare interface EventData {
+export declare interface EventData {
   before: string
   on: string
   arg: any
 }
+
+export type afterTransitionEvent =
+  | false
+  | EventData
 
 export default class StateMachineControl {
   public transitions: TransitionCore
@@ -18,12 +26,16 @@ export default class StateMachineControl {
   public onStateMap: Map<string, Function[]> = new Map()
   public onceStateMap: Map<string, Function[]> = new Map()
   public isPending = false
+  private _onTransition: TransitionFunction = {
+    '*': () => {}
+  }
 
   constructor(public options: Options) {
     this.transitions = new TransitionCore(
       options.transitions,
       options.initState
     )
+    this._onTransition = this.options.onTransition || this._onTransition
     this.step = this.step.bind(this)
     this.on = this.on.bind(this)
   }
@@ -81,9 +93,7 @@ export default class StateMachineControl {
           if (!_result) {
             this.isPending = false
           } else {
-            if (typeof this.options.onTransition === 'function') {
-              await this.options.onTransition(_result)
-            }
+            await this.execTransition(_result)
             this.runHookFunction(_result.on, args)
           }
           return _result
@@ -97,8 +107,8 @@ export default class StateMachineControl {
         this.isPending = false
         return result
       } else {
-        if (typeof this.options.onTransition === 'function') {
-          let afterTransition = this.options.onTransition(result)
+        if (typeof this._onTransition === 'function') {
+          let afterTransition = this.execTransition(result)
           if (afterTransition instanceof Promise) {
             return afterTransition
               .then(this.runHookFunction.bind(this, result.on, args))
@@ -107,6 +117,9 @@ export default class StateMachineControl {
                 this.isPending = false
                 throw new Error(err)
               })
+          } else {
+            this.runHookFunction(result.on, args)
+            return result
           }
         } else {
           this.runHookFunction(result.on, args)
@@ -114,6 +127,22 @@ export default class StateMachineControl {
         }
       }
     }
+  }
+
+  execTransition(
+    result: afterTransitionEvent
+  ) {
+    if (!result) return false
+    if (typeof this._onTransition === 'function') {
+      return this._onTransition(result)
+    } else {
+      let all = this._onTransition['*'](result)
+      let current = this._onTransition[result.on](result)
+      if (all instanceof Promise || current instanceof Promise) {
+        return Promise.all([all, current])
+      }
+    }
+    return true
   }
 
   runHookFunction(state: string, args) {
@@ -124,7 +153,7 @@ export default class StateMachineControl {
     }
     if (onceFn) {
       do {
-        onceFn.pop()(...args)
+        onceFn.shift()(...args)
       } while (onceFn.length)
     }
     this.isPending = false
