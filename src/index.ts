@@ -1,3 +1,3 @@
-import * as StateMachine from './state-machine'
+import StateMachine from './state-machine'
 
-module.exports = StateMachine.default
+module.exports = StateMachine

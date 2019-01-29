@@ -1,5 +1,5 @@
 .history/
 node_modules/
-*.js
+src/*.js
 .nyc_output/
 coverage/
