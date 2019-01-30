@@ -1,7 +1,18 @@
-import {StateMachineControl} from '../src/'
+import { StateMachineControl } from '../src/'
 
 let smc = new StateMachineControl({
-  onTransition: console.dir,
+  onTransition: {
+    '*': console.dir,
+    'END': async ({ arg }) => {
+      if (arg && arg[0] && arg[0].sec) {
+        await new Promise((resolve, rej) => {
+          setTimeout(() => {
+            resolve()
+          }, arg[0].sec * 1000)
+        })
+      }
+    }
+  },
   initState: 'none',
   transitions: [
     {
@@ -15,7 +26,7 @@ let smc = new StateMachineControl({
       from: 'none',
       action: 'start',
       to: 'START',
-      guardian(argv:any = {}) {
+      guardian(argv: any = {}) {
         if (argv.test) return true
         else return false
       }
@@ -25,21 +36,20 @@ let smc = new StateMachineControl({
     { from: 'END', action: 'reset', to: 'none' }
   ]
 })
-smc.on('START', console.log)
-smc.on('END', async arg => {
-  let { sec } = arg
-  await new Promise((resolve, reject) => {
-    setTimeout(resolve, sec * 1000)
-  })
-})
-smc.step('start')
-console.log(smc.getState())
-smc.step('start', {test: true})
-console.log(smc.getState())
-console.log(smc.getStateList())
-console.log(smc.getMethods('START'))
-smc.step('goto', 'none')
-console.log(smc.getState())
-smc.getStateList()
-smc.step('start', { test: 'test' }, 1, 2, 3)
-smc.step('stop', { sec: 10 })
+async function test() {
+  smc.on('START', console.log)
+  smc.once('END', console.log)
+  smc.step('start')
+  console.log(smc.getState())
+  smc.step('start', { test: true })
+  console.log(smc.getState())
+  console.log(smc.getStateList())
+  console.log(smc.getMethods('START'))
+  smc.step('goto', 'none')
+  console.log(smc.getState())
+  smc.getStateList()
+  smc.step('start', { test: 'test' }, 1, 2, 3)
+  await smc.step('stop', { sec: 10 })
+  smc.step('goto', 'none')
+}
+test()

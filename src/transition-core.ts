@@ -35,13 +35,13 @@ export class TransitionCore {
     this.stateOnTransition = this.stateOnTransition.bind(this)
   }
 
-  stepTo(method: string, ...arg: any): afterTransitionEvent | Promise<afterTransitionEvent> {
+  stepTo(action: string, ...arg: any): afterTransitionEvent | Promise<afterTransitionEvent> {
     let prevState = this._state
-    let key = `${this._state}/${method}`
-    if (this.transitionMap.has(`*/${method}`)) {
-      key = `*/${method}`
+    let key = `${this._state}/${action}`
+    if (this.transitionMap.has(`*/${action}`)) {
+      key = `*/${action}`
     } else if (!this.transitionMap.has(key)) {
-      console.error(`Cannot transition with ${method}`)
+      console.error(`Cannot transition with ${action}`)
       return false
     }
     const group = Object.assign({}, this.transitionMap.get(key))
@@ -65,7 +65,7 @@ export class TransitionCore {
   }
 
   getStates() {
-    let list = []
+    let list:string[] = []
     this.stateList.forEach(e => list.push(e))
     return list
   }
@@ -81,6 +81,7 @@ export class TransitionCore {
       return {
         before: e.from,
         on: this._state,
+        action: e.action,
         arg
       }
     } else {

@@ -13,6 +13,7 @@ export declare interface Options {
 export declare interface EventData {
   before: string
   on: string
+  action: string
   arg: any
 }
 
@@ -40,7 +41,13 @@ export default class StateMachineControl {
     this.on = this.on.bind(this)
   }
 
+  /**
+   * Setting on state hook function
+   * @param state 
+   * @param fn 
+   */
   on(state: string, fn: (arg?: any) => void) {
+    if (!~this.transitions.getStates().indexOf(state)) return false
     if (this.onStateMap.has(state)) {
       this.onStateMap.get(state).push(fn)
     } else {
@@ -49,6 +56,7 @@ export default class StateMachineControl {
   }
 
   once(state: string, fn: (arg?: any) => void) {
+    if (!~this.transitions.getStates().indexOf(state)) return false
     if (this.onceStateMap.has(state)) {
       this.onceStateMap.get(state).push(fn)
     } else {
@@ -58,8 +66,12 @@ export default class StateMachineControl {
 
   off(state: string, fn: Function) {
     let fns = this.onStateMap.get(state)
+    let onceFn = this.onceStateMap.get(state)
     if (~fns.indexOf(fn)) {
       fns.splice(fns.indexOf(fn), 1)
+    }
+    if (~onceFn.indexOf(fn)) {
+      fns.splice(onceFn.indexOf(fn), 1)
     }
   }
 
@@ -107,20 +119,15 @@ export default class StateMachineControl {
         this.isPending = false
         return result
       } else {
-        if (typeof this._onTransition === 'function') {
-          let afterTransition = this.execTransition(result)
-          if (afterTransition instanceof Promise) {
-            return afterTransition
-              .then(this.runHookFunction.bind(this, result.on, args))
-              .then(res => Promise.resolve(result))
-              .catch(err => {
-                this.isPending = false
-                throw new Error(err)
-              })
-          } else {
-            this.runHookFunction(result.on, args)
-            return result
-          }
+        let afterTransition = this.execTransition(result)
+        if (afterTransition instanceof Promise) {
+          return afterTransition
+            .then(this.runHookFunction.bind(this, result.on, args))
+            .then(res => Promise.resolve(result))
+            .catch(err => {
+              this.isPending = false
+              throw new Error(err)
+            })
         } else {
           this.runHookFunction(result.on, args)
           return result
@@ -136,13 +143,17 @@ export default class StateMachineControl {
     if (typeof this._onTransition === 'function') {
       return this._onTransition(result)
     } else {
-      let all = this._onTransition['*'](result)
-      let current = this._onTransition[result.on](result)
+      let all = this._onTransition['*'] && this._onTransition['*'](result)
+      let current = this._onTransition[result.on] && this._onTransition[result.on](result)
       if (all instanceof Promise || current instanceof Promise) {
-        return Promise.all([all, current])
+        return (async () => {
+          await all
+          await current
+        })()
+      } else {
+        return true
       }
     }
-    return true
   }
 
   runHookFunction(state: string, args) {
