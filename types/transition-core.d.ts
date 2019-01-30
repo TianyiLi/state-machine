@@ -1,3 +1,4 @@
+import { afterTransitionEvent } from './state-machine';
 export declare class TransitionCore {
     transitionGroups: TransitionGroup[];
     initState: string;
@@ -6,21 +7,14 @@ export declare class TransitionCore {
     private transitionMethods;
     private _state;
     constructor(transitionGroups: TransitionGroup[], initState: string);
-    stepTo(method: string, ...arg: any): false | {
-        before: string;
-        on: string;
-        arg: any[];
-    } | Promise<false | {
-        before: string;
-        on: string;
-        arg: any[];
-    }>;
+    stepTo(action: string, ...arg: any): afterTransitionEvent | Promise<afterTransitionEvent>;
     getMethods(state?: string): string[];
-    getStates(): any[];
+    getStates(): string[];
     readonly state: string;
     stateOnTransition(e: TransitionGroup, ...arg: any[]): false | {
         before: string;
         on: string;
+        action: string;
         arg: any[];
     };
 }

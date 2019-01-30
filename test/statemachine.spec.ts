@@ -1,4 +1,4 @@
-import StateMachineControl from '../src/state-machine'
+import StateMachineController, { TransitionFunction } from '../src/state-machine'
 import 'mocha'
 import * as assert from 'assert'
 
@@ -8,8 +8,8 @@ function sleep(sec) {
   })
 }
 
-function createStateMachine(cb = process.env.node ? {'*': console.dir} : () => {}) {
-  return new StateMachineControl({
+function createStateMachine(cb: TransitionFunction = { '*': console.dir }) {
+  return new StateMachineController({
     initState: 'none',
     onTransition: cb,
     transitions: [
