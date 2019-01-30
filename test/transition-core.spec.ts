@@ -87,6 +87,7 @@ describe('Transition core test', () => {
       assert.deepEqual(tc.stepTo('start'), {
         before: 'none',
         on: 'a',
+        action: 'start',
         arg: []
       })
       assert.equal(tc.state, 'a')
@@ -100,6 +101,7 @@ describe('Transition core test', () => {
       assert.deepEqual(tc.stepTo('start', 1, 2, 3), {
         before: 'none',
         on: 'a',
+        action: 'start',
         arg: [1, 2, 3]
       })
     })

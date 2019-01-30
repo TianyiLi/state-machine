@@ -74,7 +74,7 @@ export class TransitionCore {
     return this._state
   }
 
-  stateOnTransition(e: TransitionGroup, ...arg) {
+  stateOnTransition(e: TransitionGroup, ...arg):afterTransitionEvent {
     let to = typeof e.to === 'function' ? e.to(...arg) : e.to
     if (this.stateList.has(to)) {
       this._state = to

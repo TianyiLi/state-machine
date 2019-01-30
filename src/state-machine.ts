@@ -1,7 +1,7 @@
 import { TransitionCore, TransitionGroup } from './transition-core'
 
 export type TransitionFunction =
-  | ((EventData: EventData) => void | Promise<void>)
+  | ((EventData: afterTransitionEvent) => void | Promise<void>)
   | { [x: string]: (EventData: EventData) => void | Promise<void> }
 
 export declare interface Options {
@@ -74,8 +74,11 @@ export default class StateMachineControl {
 
   /**
    * Setting on state hook function
-   * @param state
-   * @param fn
+   *
+   * @param {string} state
+   * @param {(arg?: any) => void} fn
+   * @returns
+   * @memberof StateMachineControl
    */
   on(state: string, fn: (arg?: any) => void) {
     if (!~this.transitionCore.getStates().indexOf(state)) return false
@@ -84,6 +87,7 @@ export default class StateMachineControl {
     } else {
       this.onStateMap.set(state, [fn])
     }
+    return true
   }
 
   /**
@@ -101,6 +105,7 @@ export default class StateMachineControl {
     } else {
       this.onceStateMap.set(state, [fn])
     }
+    return true
   }
 
   /**
@@ -113,11 +118,11 @@ export default class StateMachineControl {
   off(state: string, fn: Function) {
     let fns = this.onStateMap.get(state)
     let onceFn = this.onceStateMap.get(state)
-    if (~fns.indexOf(fn)) {
+    if (fns && !!~fns.indexOf(fn)) {
       fns.splice(fns.indexOf(fn), 1)
     }
-    if (~onceFn.indexOf(fn)) {
-      fns.splice(onceFn.indexOf(fn), 1)
+    if (onceFn && !!~onceFn.indexOf(fn)) {
+      onceFn.splice(onceFn.indexOf(fn), 1)
     }
   }
 
@@ -130,8 +135,10 @@ export default class StateMachineControl {
   removeAllListener(state?: string) {
     if (state) {
       this.onStateMap.delete(state)
+      this.onceStateMap.delete(state)
     } else {
       this.onStateMap.clear()
+      this.onceStateMap.clear()
     }
   }
 
@@ -174,7 +181,10 @@ export default class StateMachineControl {
    * @returns
    * @memberof StateMachineControl
    */
-  step(action: string, ...args) {
+  step(
+    action: string,
+    ...args
+  ): afterTransitionEvent | Promise<afterTransitionEvent> {
     let result = this.transitionCore.stepTo(action, ...args)
     if (this.isPending === true) return false
     this.isPending = true
@@ -215,8 +225,7 @@ export default class StateMachineControl {
     }
   }
 
-  private execTransition(result: afterTransitionEvent) {
-    if (!result) return false
+  private execTransition(result: EventData) {
     if (typeof this._onTransition === 'function') {
       return this._onTransition(result)
     } else {
@@ -241,9 +250,9 @@ export default class StateMachineControl {
       fn.forEach(f => f(...args))
     }
     if (onceFn) {
-      do {
+      while (onceFn.length) {
         onceFn.shift()(...args)
-      } while (onceFn.length)
+      }
     }
     this.isPending = false
   }
