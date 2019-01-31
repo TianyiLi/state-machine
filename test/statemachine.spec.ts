@@ -51,6 +51,14 @@ function createStateMachine(cb: TransitionFunction = { '*': console.dir }) {
       {
         from: '*',
         to: state => state,
+        action: 'asyncGuardianError',
+        guardian: async (arg) => {
+          throw new Error('guardian error')
+        }
+      },
+      {
+        from: '*',
+        to: state => state,
         action: 'goto'
       }
     ]
@@ -193,9 +201,14 @@ describe('StateMachineControl test', () => {
     await assert.rejects(smc.step.bind(smc, 'start'))
     assert.equal(smc.isPending, false)
   })
-  it ('guardian error, pending should be clear', async () => {
+  it ('guardian error, pending should be clear', () => {
     let smc = createStateMachine()
-    await assert.rejects(smc.step.bind(smc, 'guardian error'))
+    assert.throws(() => smc.step('guardianError'))
+    assert.equal(smc.isPending, false)
+  })
+  it ('async guardian error, pending should be clear', async () => {
+    let smc = createStateMachine()
+    await assert.rejects(smc.step.bind(smc, 'asyncGuardianError'))
     assert.equal(smc.isPending, false)
   })
 })

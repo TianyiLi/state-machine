@@ -41,7 +41,7 @@ export class TransitionCore {
     if (this.transitionMap.has(`*/${action}`)) {
       key = `*/${action}`
     } else if (!this.transitionMap.has(key)) {
-      console.error(`Cannot transition with ${action}`)
+      console.warn(`Cannot transition with ${action}`)
       return false
     }
     const group = Object.assign({}, this.transitionMap.get(key))
@@ -89,9 +89,8 @@ export class TransitionCore {
     }
   }
 }
-
 export declare interface TransitionGroup {
-  guardian?: (...arg: any) => boolean | ((...arg: any) => Promise<boolean>)
+  guardian?: (...arg: any) => (boolean|Promise<boolean>) 
   from: string
   to: string | ((...arg: any) => string)
   action: string

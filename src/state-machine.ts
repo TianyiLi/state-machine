@@ -1,4 +1,5 @@
 import { TransitionCore, TransitionGroup } from './transition-core'
+import { fnsHasPromise } from './util'
 
 export type TransitionFunction =
   | ((EventData: afterTransitionEvent) => void | Promise<void>)
@@ -185,10 +186,17 @@ export default class StateMachineControl {
     action: string,
     ...args
   ): afterTransitionEvent | Promise<afterTransitionEvent> {
-    let result = this.transitionCore.stepTo(action, ...args)
     if (this.isPending === true) return false
     this.isPending = true
+    let result:false | EventData | Promise<afterTransitionEvent>
+    try {
+      result = this.transitionCore.stepTo(action, ...args)
+    } catch (error) {
+      this.isPending = false
+      throw error
+    }
     if (result instanceof Promise) {
+      // if guardian is Promise
       return result
         .then(async _result => {
           if (!_result) {
@@ -201,23 +209,33 @@ export default class StateMachineControl {
         })
         .catch(err => {
           this.isPending = false
-          throw new Error(err)
+          throw (err)
         })
     } else {
+      // if guardian not Promise
       if (!result) {
         this.isPending = false
         return result
       } else {
-        let afterTransition = this.execTransition(result)
+        let afterTransition:true | void | Promise<void>
+        try {
+          afterTransition = this.execTransition(result)
+        } catch (error) {
+          this.isPending = false
+          throw error
+        }
         if (afterTransition instanceof Promise) {
-          return afterTransition
-            .then(this.runHookFunction.bind(this, result.on, args))
-            .then(res => Promise.resolve(result))
-            .catch(err => {
-              this.isPending = false
-              throw new Error(err)
-            })
+          return (async () => {
+            await afterTransition
+            this.isPending = false
+            await this.runHookFunction(result.on, args)
+            return result
+          })().catch(err => {
+            this.isPending = false
+            throw (err)
+          })
         } else {
+          this.isPending = false
           this.runHookFunction(result.on, args)
           return result
         }
@@ -232,7 +250,7 @@ export default class StateMachineControl {
       let all = this._onTransition['*'] && this._onTransition['*'](result)
       let current =
         this._onTransition[result.on] && this._onTransition[result.on](result)
-      if (all instanceof Promise || current instanceof Promise) {
+      if (fnsHasPromise(all, current)) {
         return (async () => {
           await all
           await current
@@ -254,7 +272,6 @@ export default class StateMachineControl {
         onceFn.shift()(...args)
       }
     }
-    this.isPending = false
   }
 
   /**
