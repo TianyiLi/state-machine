@@ -24,7 +24,7 @@
 
 **● initState**: *`string`*
 
-*Defined in [state-machine.ts:10](https://github.com/TianyiLi/state-machine/blob/6c5a24d/src/state-machine.ts#L10)*
+*Defined in [state-machine.ts:11](https://github.com/TianyiLi/state-machine/blob/e7d6c74/src/state-machine.ts#L11)*
 
 ___
 <a id="ontransition"></a>
@@ -33,7 +33,7 @@ ___
 
 **● onTransition**: *[TransitionFunction](../modules/_state_machine_.md#transitionfunction)*
 
-*Defined in [state-machine.ts:9](https://github.com/TianyiLi/state-machine/blob/6c5a24d/src/state-machine.ts#L9)*
+*Defined in [state-machine.ts:10](https://github.com/TianyiLi/state-machine/blob/e7d6c74/src/state-machine.ts#L10)*
 
 ___
 <a id="transitions"></a>
@@ -42,7 +42,7 @@ ___
 
 **● transitions**: *[TransitionGroup](_transition_core_.transitiongroup.md)[]*
 
-*Defined in [state-machine.ts:8](https://github.com/TianyiLi/state-machine/blob/6c5a24d/src/state-machine.ts#L8)*
+*Defined in [state-machine.ts:9](https://github.com/TianyiLi/state-machine/blob/e7d6c74/src/state-machine.ts#L9)*
 
 ___
 

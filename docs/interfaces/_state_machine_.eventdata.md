@@ -25,7 +25,7 @@
 
 **● action**: *`string`*
 
-*Defined in [state-machine.ts:16](https://github.com/TianyiLi/state-machine/blob/6c5a24d/src/state-machine.ts#L16)*
+*Defined in [state-machine.ts:17](https://github.com/TianyiLi/state-machine/blob/e7d6c74/src/state-machine.ts#L17)*
 
 ___
 <a id="arg"></a>
@@ -34,7 +34,7 @@ ___
 
 **● arg**: *`any`*
 
-*Defined in [state-machine.ts:17](https://github.com/TianyiLi/state-machine/blob/6c5a24d/src/state-machine.ts#L17)*
+*Defined in [state-machine.ts:18](https://github.com/TianyiLi/state-machine/blob/e7d6c74/src/state-machine.ts#L18)*
 
 ___
 <a id="before"></a>
@@ -43,7 +43,7 @@ ___
 
 **● before**: *`string`*
 
-*Defined in [state-machine.ts:14](https://github.com/TianyiLi/state-machine/blob/6c5a24d/src/state-machine.ts#L14)*
+*Defined in [state-machine.ts:15](https://github.com/TianyiLi/state-machine/blob/e7d6c74/src/state-machine.ts#L15)*
 
 ___
 <a id="on"></a>
@@ -52,7 +52,7 @@ ___
 
 **● on**: *`string`*
 
-*Defined in [state-machine.ts:15](https://github.com/TianyiLi/state-machine/blob/6c5a24d/src/state-machine.ts#L15)*
+*Defined in [state-machine.ts:16](https://github.com/TianyiLi/state-machine/blob/e7d6c74/src/state-machine.ts#L16)*
 
 ___
 

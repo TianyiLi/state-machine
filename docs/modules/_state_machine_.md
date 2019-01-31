@@ -28,7 +28,7 @@
 
 **Ƭ TransitionFunction**: *`function` \| `object`*
 
-*Defined in [state-machine.ts:3](https://github.com/TianyiLi/state-machine/blob/6c5a24d/src/state-machine.ts#L3)*
+*Defined in [state-machine.ts:4](https://github.com/TianyiLi/state-machine/blob/e7d6c74/src/state-machine.ts#L4)*
 
 ___
 <a id="aftertransitionevent"></a>
@@ -37,7 +37,7 @@ ___
 
 **Ƭ afterTransitionEvent**: *`false` \| [EventData](../interfaces/_state_machine_.eventdata.md)*
 
-*Defined in [state-machine.ts:20](https://github.com/TianyiLi/state-machine/blob/6c5a24d/src/state-machine.ts#L20)*
+*Defined in [state-machine.ts:21](https://github.com/TianyiLi/state-machine/blob/e7d6c74/src/state-machine.ts#L21)*
 
 ___
 
