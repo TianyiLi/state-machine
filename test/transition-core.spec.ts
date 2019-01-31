@@ -55,6 +55,7 @@ describe('Transition core test', () => {
     it('getMethods should be correct', () => {
       let tc = createTc()
       assert.deepEqual(tc.getMethods(), ['start'])
+      assert.deepEqual(tc.getMethods('*'), ['goto'])
     })
     it('should not be transition', () => {
       let tc = createTc()

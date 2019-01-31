@@ -47,11 +47,14 @@ export class TransitionCore {
     const group = Object.assign({}, this.transitionMap.get(key))
     let guardian = group.guardian ? group.guardian(...arg) : true
     if (guardian instanceof Promise) {
-      return guardian.then(res => {
+      return (async () => {
+        let state = await guardian
         group.from = prevState
-        if (res === true) return this.stateOnTransition(group, ...arg)
-        else return false
-      })
+        if (state) {
+          let _transitionState = await this.stateOnTransition(group, ...arg)
+          return _transitionState
+        } else return false
+      })()
     } else if (guardian) {
       group.from = prevState
       return this.stateOnTransition(group, ...arg)

@@ -30,7 +30,7 @@ function createStateMachine(cb: TransitionFunction = { '*': console.dir }) {
         action: 'sleep',
         async guardian(arg) {
           await sleep(500)
-          return !!arg
+          return arg
         }
       },
       {
@@ -87,13 +87,22 @@ describe('StateMachineControl test', () => {
       }
     })
     smc.step('goto', 'c')
+    assert.equal(smc.getState(), 'c')
   })
-  it('async guardian should work well', async () => {
+  it('async guardian should work well', async function () {
+    this.timeout(10 * 1000)
     let smc = createStateMachine(() => {})
     smc.step('goto', 'b')
     let timestamp = Date.now()
     await smc.step('sleep', true)
     assert.equal(Date.now() - timestamp >= 500, true)
+    assert.equal(smc.getState(), 'c')
+    timestamp = Date.now()
+    smc.step('goto', 'b')
+    assert.equal(smc.getState(), 'b')
+    await smc.step('sleep')
+    assert.equal(Date.now() - timestamp >= 500, true)
+    assert.equal(smc.getState(), 'b')
   })
   it('on state should be work', done => {
     let smc = createStateMachine(() => {})
@@ -171,6 +180,7 @@ describe('StateMachineControl test', () => {
   it('isPending test', done => {
     let smc = createStateMachine({
       a: async ({ arg }) => {
+        console.log(arg)
         await sleep(arg[0].sec)
       }
     })
@@ -210,5 +220,11 @@ describe('StateMachineControl test', () => {
     let smc = createStateMachine()
     await assert.rejects(smc.step.bind(smc, 'asyncGuardianError'))
     assert.equal(smc.isPending, false)
+  })
+  it ('async guardian return false', async () => {
+    let smc = createStateMachine()
+    smc.step('goto', 'b')
+    await smc.step('sleep', false)
+    assert.equal(smc.getState(), 'b')
   })
 })

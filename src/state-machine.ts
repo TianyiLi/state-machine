@@ -186,10 +186,13 @@ export default class StateMachineControl {
     action: string,
     ...args
   ): afterTransitionEvent | Promise<afterTransitionEvent> {
-    if (this.isPending === true) return false
-    this.isPending = true
-    let result:false | EventData | Promise<afterTransitionEvent>
+    if (this.isPending === true) {
+      console.warn('Transition still working')
+      return false
+    }
+    let result:afterTransitionEvent | Promise<afterTransitionEvent>
     try {
+      this.isPending = true
       result = this.transitionCore.stepTo(action, ...args)
     } catch (error) {
       this.isPending = false
@@ -197,20 +200,21 @@ export default class StateMachineControl {
     }
     if (result instanceof Promise) {
       // if guardian is Promise
-      return result
-        .then(async _result => {
-          if (!_result) {
-            this.isPending = false
-          } else {
+      return (async () => {
+        let _result:afterTransitionEvent
+        try {
+          _result = await result
+          if (_result !== false) {
             await this.execTransition(_result)
             this.runHookFunction(_result.on, args)
+            this.isPending = false
           }
-          return _result
-        })
-        .catch(err => {
+        } catch (error) {
           this.isPending = false
-          throw (err)
-        })
+          throw error
+        }
+        return _result
+      })()
     } else {
       // if guardian not Promise
       if (!result) {
@@ -227,16 +231,16 @@ export default class StateMachineControl {
         if (afterTransition instanceof Promise) {
           return (async () => {
             await afterTransition
-            this.isPending = false
             await this.runHookFunction(result.on, args)
+            this.isPending = false
             return result
           })().catch(err => {
             this.isPending = false
             throw (err)
           })
         } else {
-          this.isPending = false
           this.runHookFunction(result.on, args)
+          this.isPending = false
           return result
         }
       }
@@ -244,21 +248,23 @@ export default class StateMachineControl {
   }
 
   private execTransition(result: EventData) {
+    let _return:true | void | Promise<void>
     if (typeof this._onTransition === 'function') {
-      return this._onTransition(result)
+      _return = this._onTransition(result)
     } else {
       let all = this._onTransition['*'] && this._onTransition['*'](result)
       let current =
         this._onTransition[result.on] && this._onTransition[result.on](result)
       if (fnsHasPromise(all, current)) {
-        return (async () => {
+        _return = (async () => {
           await all
           await current
         })()
       } else {
-        return true
+        _return = true
       }
     }
+    return _return
   }
 
   private runHookFunction(state: string, args) {
