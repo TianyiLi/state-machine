@@ -1,5 +1,5 @@
 import { TransitionCore, TransitionGroup } from './transition-core';
-export declare type TransitionFunction = ((EventData: EventData) => void | Promise<void>) | {
+export declare type TransitionFunction = ((EventData: afterTransitionEvent) => void | Promise<void>) | {
     [x: string]: (EventData: EventData) => void | Promise<void>;
 };
 export declare interface Options {
@@ -58,8 +58,11 @@ export default class StateMachineControl {
     constructor(options: Options);
     /**
      * Setting on state hook function
-     * @param state
-     * @param fn
+     *
+     * @param {string} state
+     * @param {(arg?: any) => void} fn
+     * @returns
+     * @memberof StateMachineControl
      */
     on(state: string, fn: (arg?: any) => void): boolean;
     /**
@@ -116,7 +119,7 @@ export default class StateMachineControl {
      * @returns
      * @memberof StateMachineControl
      */
-    step(action: string, ...args: any[]): false | EventData | Promise<afterTransitionEvent>;
+    step(action: string, ...args: any[]): afterTransitionEvent | Promise<afterTransitionEvent>;
     private execTransition;
     private runHookFunction;
     /**
