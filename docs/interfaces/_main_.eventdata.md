@@ -1,4 +1,4 @@
-[state-machine](../README.md) > ["main"](../modules/_main_.md) > [EventData](../interfaces/_main_.eventdata.md)
+[state-machine-control](../README.md) > ["main"](../modules/_main_.md) > [EventData](../interfaces/_main_.eventdata.md)
 
 # Interface: EventData
 
@@ -25,7 +25,7 @@
 
 **● action**: *`string`*
 
-*Defined in [main.ts:17](https://github.com/TianyiLi/state-machine/blob/489acc1/src/main.ts#L17)*
+*Defined in [main.ts:17](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/main.ts#L17)*
 
 ___
 <a id="arg"></a>
@@ -34,7 +34,7 @@ ___
 
 **● arg**: *`any`*
 
-*Defined in [main.ts:18](https://github.com/TianyiLi/state-machine/blob/489acc1/src/main.ts#L18)*
+*Defined in [main.ts:18](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/main.ts#L18)*
 
 ___
 <a id="before"></a>
@@ -43,7 +43,7 @@ ___
 
 **● before**: *`string`*
 
-*Defined in [main.ts:15](https://github.com/TianyiLi/state-machine/blob/489acc1/src/main.ts#L15)*
+*Defined in [main.ts:15](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/main.ts#L15)*
 
 ___
 <a id="on"></a>
@@ -52,7 +52,7 @@ ___
 
 **● on**: *`string`*
 
-*Defined in [main.ts:16](https://github.com/TianyiLi/state-machine/blob/489acc1/src/main.ts#L16)*
+*Defined in [main.ts:16](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/main.ts#L16)*
 
 ___
 

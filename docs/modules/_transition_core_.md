@@ -1,4 +1,4 @@
-[state-machine](../README.md) > ["transition-core"](../modules/_transition_core_.md)
+[state-machine-control](../README.md) > ["transition-core"](../modules/_transition_core_.md)
 
 # External module: "transition-core"
 

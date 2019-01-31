@@ -14,7 +14,7 @@ module.exports = {
   },
   output: {
     filename: `lib${process.env.NODE_ENV === 'production' ? '.min' : ''}.js`,
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'lib'),
     libraryTarget: 'umd',
     globalObject: 'this'
   },

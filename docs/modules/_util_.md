@@ -1,4 +1,4 @@
-[state-machine](../README.md) > ["util"](../modules/_util_.md)
+[state-machine-control](../README.md) > ["util"](../modules/_util_.md)
 
 # External module: "util"
 
@@ -18,7 +18,7 @@
 
 ▸ **fnsHasPromise**<`T`>(..._type: *`T`[]*): `boolean`
 
-*Defined in [util.ts:1](https://github.com/TianyiLi/state-machine/blob/489acc1/src/util.ts#L1)*
+*Defined in [util.ts:1](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/util.ts#L1)*
 
 **Type parameters:**
 

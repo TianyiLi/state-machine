@@ -14,7 +14,7 @@ export declare interface EventData {
     arg: any;
 }
 export declare type afterTransitionEvent = false | EventData;
-export declare class StateMachineControl {
+export declare class StateMachine {
     options: Options;
     /**
      * @remark Transition Core
@@ -132,4 +132,4 @@ export declare class StateMachineControl {
      */
     can(action: string): boolean;
 }
-export default StateMachineControl;
+export default StateMachine;
