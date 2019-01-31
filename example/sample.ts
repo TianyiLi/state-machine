@@ -1,6 +1,6 @@
-import { StateMachineControl } from '../src/main'
+import { StateMachine } from '../src/main'
 
-let smc = new StateMachineControl({
+let smc = new StateMachine({
   onTransition: {
     '*': console.dir,
     'END': async ({ arg }) => {

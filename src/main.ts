@@ -20,7 +20,7 @@ export declare interface EventData {
 
 export type afterTransitionEvent = false | EventData
 
-export class StateMachineControl {
+export class StateMachine {
   /**
    * @remark Transition Core
    */
@@ -299,4 +299,4 @@ export class StateMachineControl {
   }
 }
 
-export default StateMachineControl
+export default StateMachine

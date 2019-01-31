@@ -1,4 +1,4 @@
-import StateMachineControl, { TransitionFunction } from '../src/state-machine'
+import StateMachine, { TransitionFunction } from '../src/main'
 import 'mocha'
 import * as assert from 'assert'
 
@@ -9,7 +9,7 @@ function sleep(sec) {
 }
 
 function createStateMachine(cb: TransitionFunction = { '*': console.dir }) {
-  return new StateMachineControl({
+  return new StateMachine({
     initState: 'none',
     onTransition: cb,
     transitions: [
