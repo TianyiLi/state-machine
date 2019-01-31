@@ -14,7 +14,7 @@ export declare interface EventData {
     arg: any;
 }
 export declare type afterTransitionEvent = false | EventData;
-export default class StateMachineControl {
+export declare class StateMachineControl {
     options: Options;
     /**
      * @remark Transition Core
@@ -120,6 +120,7 @@ export default class StateMachineControl {
      * @memberof StateMachineControl
      */
     step(action: string, ...args: any[]): afterTransitionEvent | Promise<afterTransitionEvent>;
+    private stepOnRejectHandler;
     private execTransition;
     private runHookFunction;
     /**
@@ -131,3 +132,4 @@ export default class StateMachineControl {
      */
     can(action: string): boolean;
 }
+export default StateMachineControl;

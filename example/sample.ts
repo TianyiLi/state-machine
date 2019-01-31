@@ -1,4 +1,4 @@
-import { StateMachineControl } from '../src/'
+import { StateMachineControl } from '../src/main'
 
 let smc = new StateMachineControl({
   onTransition: {

@@ -3,7 +3,7 @@ const webpack = require('webpack')
 /** @type {import('webpack').WebpackOptions} */
 module.exports = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  entry: './src/index.ts',
+  entry: './src/main.ts',
   module: {
     rules: [
       { test: /\.ts$/, use: 'ts-loader', exclude: /node_modules/ },
@@ -13,7 +13,7 @@ module.exports = {
     extensions: ['.ts']
   },
   output: {
-    filename: 'lib.js',
+    filename: `lib${process.env.NODE_ENV === 'production' ? '.min' : ''}.js`,
     path: path.resolve(__dirname, 'dist'),
     libraryTarget: 'umd',
     globalObject: 'this'

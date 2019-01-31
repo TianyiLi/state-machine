@@ -1,4 +1,4 @@
-import { afterTransitionEvent } from './state-machine';
+import { afterTransitionEvent } from './main';
 export declare class TransitionCore {
     transitionGroups: TransitionGroup[];
     initState: string;

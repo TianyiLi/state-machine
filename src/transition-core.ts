@@ -1,4 +1,4 @@
-import { afterTransitionEvent } from './state-machine'
+import { afterTransitionEvent } from './main'
 export class TransitionCore {
   private transitionMap: Map<string, TransitionGroup> = new Map()
   private stateList: Set<string> = new Set()
@@ -47,14 +47,16 @@ export class TransitionCore {
     const group = Object.assign({}, this.transitionMap.get(key))
     let guardian = group.guardian ? group.guardian(...arg) : true
     if (guardian instanceof Promise) {
-      return (async () => {
-        let state = await guardian
-        group.from = prevState
-        if (state) {
-          let _transitionState = await this.stateOnTransition(group, ...arg)
-          return _transitionState
-        } else return false
-      })()
+      return Promise.resolve().then(() => guardian)
+        .then(res => {
+          group.from = prevState
+          return res
+        })
+        .then(res => {
+          if (res) {
+            return this.stateOnTransition(group, ...arg)
+          } else return false
+        })
     } else if (guardian) {
       group.from = prevState
       return this.stateOnTransition(group, ...arg)
