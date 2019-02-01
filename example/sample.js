@@ -1,4 +1,4 @@
-const { StateMachine } = require('../types/main')
+const { StateMachine } = require('..')
 let smc = new StateMachine({
   initState: 'none',
   transitions: [
