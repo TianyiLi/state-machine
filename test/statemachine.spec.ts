@@ -227,4 +227,10 @@ describe('StateMachineControl test', () => {
     await smc.step('sleep', false)
     assert.equal(smc.getState(), 'b')
   })
+
+  it ('canTransitionTo should be work', () => {
+    let smc = createStateMachine()
+    assert.equal(smc.canTransitionTo('b'), false)
+    assert.equal(smc.canTransitionTo('a'), true)
+  })
 })

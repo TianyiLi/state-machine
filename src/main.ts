@@ -24,7 +24,7 @@ export class StateMachine {
   /**
    * @remark Transition Core
    */
-  public transitionCore: TransitionCore
+  private transitionCore: TransitionCore
   /**
    * Current State
    *
@@ -71,7 +71,8 @@ export class StateMachine {
     this._onTransition = this.options.onTransition || this._onTransition
     this.step = this.step.bind(this)
     this.on = this.on.bind(this)
-    this.stepOnRejectHandler = this.stepOnRejectHandler.bind(this)
+    this.execTransition = this.execTransition.bind(this)
+    this.runHookFunction = this.runHookFunction.bind(this)
   }
 
   /**
@@ -191,98 +192,83 @@ export class StateMachine {
       console.warn('Transition still working')
       return false
     }
-    let result:afterTransitionEvent | Promise<afterTransitionEvent>
+    let result: boolean | Promise<boolean>
     try {
       this.isPending = true
       result = this.transitionCore.stepTo(action, ...args)
+      if (!result) return false
     } catch (error) {
       this.isPending = false
       throw error
     }
     if (result instanceof Promise) {
       // if guardian is Promise
-      return result.then((_result) => {
-        return this.execTransition(_result)
-      }).then(res => {
-        if (res !== false)
-          this.runHookFunction(res.on, args)
-        return res
-      }).catch(err => {
-        this.isPending = false
-        throw err
-      }).finally(() => {
-        this.isPending = false
-      })
+      return result
+        .then(this.execTransition)
+        .then(() => (this.runHookFunction(), this.transitionCore.currentTransitionEvent))
+        .catch(err => {
+          throw err
+        })
+        .finally(() => {
+          this.isPending = false
+        })
     } else {
       // if guardian not Promise
-      if (result === false) {
+      let afterTransition: boolean | Promise<boolean>
+      try {
+        afterTransition = this.execTransition()
+      } catch (error) {
         this.isPending = false
-        return result
-      } else {
-        let afterTransition:afterTransitionEvent | Promise<afterTransitionEvent>
-        try {
-          afterTransition = this.execTransition(result)
-        } catch (error) {
-          this.isPending = false
-          throw error
-        }
-        if (afterTransition instanceof Promise) {
-          return afterTransition.then((res) => {
-            if (res)
-              return this.runHookFunction(res.on, args)
-            else
-              return res
-          }).then(() => result)
+        throw error
+      }
+      if (afterTransition instanceof Promise) {
+        return afterTransition
+          .then(() => (this.runHookFunction(), this.transitionCore.currentTransitionEvent))
           .catch(err => {
             throw err
           })
           .finally(() => {
             this.isPending = false
           })
-        } else {
-          this.runHookFunction(result.on, args)
-          this.isPending = false
-          return result
-        }
+      } else {
+        this.runHookFunction()
+        this.isPending = false
+        return this.transitionCore.currentTransitionEvent
       }
     }
   }
 
-  private stepOnRejectHandler (err):false {
-    if (err === false) return false
-    else throw err
-  }
-
-  private execTransition(result: afterTransitionEvent) {
-    if (result === false) return result
-    let _return:afterTransitionEvent|Promise<afterTransitionEvent> = result
+  private execTransition() {
+    let transitionData = this.transitionCore.currentTransitionEvent
     if (typeof this._onTransition === 'function') {
-      this._onTransition(result)
+      this._onTransition(transitionData)
+      return true
     } else {
-      let all = this._onTransition['*'] && this._onTransition['*'](result)
+      let all = this._onTransition['*'] && this._onTransition['*'](transitionData)
       let current =
-        this._onTransition[result.on] && this._onTransition[result.on](result)
+        this._onTransition[transitionData.on] && this._onTransition[transitionData.on](transitionData)
       if (fnsHasPromise(all, current)) {
-        _return = Promise.resolve()
+        return Promise.resolve()
           .then(() => all)
           .then(() => current)
-          .then(() => result)
+          .then(() => true)
       } else {
-        _return = result
+        return true
       }
     }
-    return _return
   }
 
-  private runHookFunction(state: string, args) {
-    let fn = this.onStateMap.get(state)
-    let onceFn = this.onceStateMap.get(state)
+  private runHookFunction() {
+    let transitionData = this.transitionCore.currentTransitionEvent
+    let {on, arg} = transitionData
+    let fn = this.onStateMap.get(on)
+    let onceFn = this.onceStateMap.get(on)
     if (fn) {
-      fn.forEach(f => f(...args))
+      fn.forEach(f => f(...arg))
     }
     if (onceFn) {
       while (onceFn.length) {
-        onceFn.shift()(...args)
+        onceFn.shift()(...arg)
       }
     }
   }
@@ -296,6 +282,15 @@ export class StateMachine {
    */
   can(action: string) {
     return !!~this.transitionCore.getMethods().indexOf(action)
+  }
+
+  /**
+   * Check can transition to the state
+   *
+   * @param state Next state you want to transition to
+   */
+  canTransitionTo(state: string) {
+    return this.transitionCore.canTransitionTo(state)
   }
 }
 

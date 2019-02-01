@@ -1,4 +1,4 @@
-import { TransitionCore, TransitionGroup } from './transition-core';
+import { TransitionGroup } from './transition-core';
 export declare type TransitionFunction = ((EventData: afterTransitionEvent) => void | Promise<void>) | {
     [x: string]: (EventData: EventData) => void | Promise<void>;
 };
@@ -19,7 +19,7 @@ export declare class StateMachine {
     /**
      * @remark Transition Core
      */
-    transitionCore: TransitionCore;
+    private transitionCore;
     /**
      * Current State
      *
@@ -120,7 +120,6 @@ export declare class StateMachine {
      * @memberof StateMachineControl
      */
     step(action: string, ...args: any[]): afterTransitionEvent | Promise<afterTransitionEvent>;
-    private stepOnRejectHandler;
     private execTransition;
     private runHookFunction;
     /**
@@ -131,5 +130,11 @@ export declare class StateMachine {
      * @memberof StateMachineControl
      */
     can(action: string): boolean;
+    /**
+     * Check can transition to the state
+     *
+     * @param state Next state you want to transition to
+     */
+    canTransitionTo(state: string): boolean;
 }
 export default StateMachine;

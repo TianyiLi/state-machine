@@ -85,7 +85,8 @@ describe('Transition core test', () => {
     })
     it('method start should be work', () => {
       let tc = createTc()
-      assert.deepEqual(tc.stepTo('start'), {
+      tc.stepTo('start')
+      assert.deepEqual(tc.currentTransitionEvent, {
         before: 'none',
         on: 'a',
         action: 'start',
@@ -99,7 +100,8 @@ describe('Transition core test', () => {
     })
     it('param pass should be work', () => {
       let tc = createTc()
-      assert.deepEqual(tc.stepTo('start', 1, 2, 3), {
+      tc.stepTo('start', 1, 2, 3)
+      assert.deepEqual(tc.currentTransitionEvent, {
         before: 'none',
         on: 'a',
         action: 'start',

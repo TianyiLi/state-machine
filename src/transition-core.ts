@@ -1,9 +1,10 @@
-import { afterTransitionEvent } from './main'
+import { EventData } from './main'
 export class TransitionCore {
   private transitionMap: Map<string, TransitionGroup> = new Map()
   private stateList: Set<string> = new Set()
   private transitionMethods: Map<string, string[]> = new Map()
   private _state: string = null
+  private _transitionEvent:EventData = null
   constructor(
     public transitionGroups: TransitionGroup[],
     public initState: string
@@ -35,7 +36,10 @@ export class TransitionCore {
     this.stateOnTransition = this.stateOnTransition.bind(this)
   }
 
-  stepTo(action: string, ...arg: any): afterTransitionEvent | Promise<afterTransitionEvent> {
+  stepTo(
+    action: string,
+    ...arg: any
+  ) {
     let prevState = this._state
     let key = `${this._state}/${action}`
     if (this.transitionMap.has(`*/${action}`)) {
@@ -47,7 +51,8 @@ export class TransitionCore {
     const group = Object.assign({}, this.transitionMap.get(key))
     let guardian = group.guardian ? group.guardian(...arg) : true
     if (guardian instanceof Promise) {
-      return Promise.resolve().then(() => guardian)
+      return Promise.resolve()
+        .then(() => guardian)
         .then(res => {
           group.from = prevState
           return res
@@ -70,7 +75,7 @@ export class TransitionCore {
   }
 
   getStates() {
-    let list:string[] = []
+    let list: string[] = []
     this.stateList.forEach(e => list.push(e))
     return list
   }
@@ -79,24 +84,37 @@ export class TransitionCore {
     return this._state
   }
 
-  stateOnTransition(e: TransitionGroup, ...arg):afterTransitionEvent {
+  get currentTransitionEvent () {
+    return this._transitionEvent
+  }
+
+  canTransitionTo(state: string) {
+    return this.getMethods().some(_m =>
+      this.transitionMap.get(`${this._state}/${_m}`).to === state
+    )
+  }
+
+  stateOnTransition(e: TransitionGroup, ...arg) {
     let to = typeof e.to === 'function' ? e.to(...arg) : e.to
     if (this.stateList.has(to)) {
       this._state = to
-      return {
+      this._transitionEvent = {
         before: e.from,
         on: this._state,
         action: e.action,
         arg
       }
+      return true
     } else {
+      this._transitionEvent = null
       return false
     }
   }
 }
+export type AnyWhere = '*'
 export declare interface TransitionGroup {
-  guardian?: (...arg: any) => (boolean|Promise<boolean>) 
-  from: string
+  guardian?: (...arg: any) => boolean | Promise<boolean>
+  from: string | AnyWhere
   to: string | ((...arg: any) => string)
   action: string
 }

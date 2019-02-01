@@ -15,6 +15,7 @@
 ### Properties
 
 * [_state](_transition_core_.transitioncore.md#_state)
+* [_transitionEvent](_transition_core_.transitioncore.md#_transitionevent)
 * [initState](_transition_core_.transitioncore.md#initstate)
 * [stateList](_transition_core_.transitioncore.md#statelist)
 * [transitionGroups](_transition_core_.transitioncore.md#transitiongroups)
@@ -23,10 +24,12 @@
 
 ### Accessors
 
+* [currentTransitionEvent](_transition_core_.transitioncore.md#currenttransitionevent)
 * [state](_transition_core_.transitioncore.md#state)
 
 ### Methods
 
+* [canTransitionTo](_transition_core_.transitioncore.md#cantransitionto)
 * [getMethods](_transition_core_.transitioncore.md#getmethods)
 * [getStates](_transition_core_.transitioncore.md#getstates)
 * [stateOnTransition](_transition_core_.transitioncore.md#stateontransition)
@@ -42,7 +45,7 @@
 
 ⊕ **new TransitionCore**(transitionGroups: *[TransitionGroup](../interfaces/_transition_core_.transitiongroup.md)[]*, initState: *`string`*): [TransitionCore](_transition_core_.transitioncore.md)
 
-*Defined in [transition-core.ts:6](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/transition-core.ts#L6)*
+*Defined in [transition-core.ts:7](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L7)*
 
 **Parameters:**
 
@@ -63,7 +66,16 @@ ___
 
 **● _state**: *`string`* =  null
 
-*Defined in [transition-core.ts:6](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/transition-core.ts#L6)*
+*Defined in [transition-core.ts:6](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L6)*
+
+___
+<a id="_transitionevent"></a>
+
+### `<Private>` _transitionEvent
+
+**● _transitionEvent**: *[EventData](../interfaces/_main_.eventdata.md)* =  null
+
+*Defined in [transition-core.ts:7](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L7)*
 
 ___
 <a id="initstate"></a>
@@ -72,7 +84,7 @@ ___
 
 **● initState**: *`string`*
 
-*Defined in [transition-core.ts:9](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/transition-core.ts#L9)*
+*Defined in [transition-core.ts:10](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L10)*
 
 ___
 <a id="statelist"></a>
@@ -81,7 +93,7 @@ ___
 
 **● stateList**: *`Set`<`string`>* =  new Set()
 
-*Defined in [transition-core.ts:4](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/transition-core.ts#L4)*
+*Defined in [transition-core.ts:4](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L4)*
 
 ___
 <a id="transitiongroups"></a>
@@ -90,7 +102,7 @@ ___
 
 **● transitionGroups**: *[TransitionGroup](../interfaces/_transition_core_.transitiongroup.md)[]*
 
-*Defined in [transition-core.ts:8](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/transition-core.ts#L8)*
+*Defined in [transition-core.ts:9](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L9)*
 
 ___
 <a id="transitionmap"></a>
@@ -99,7 +111,7 @@ ___
 
 **● transitionMap**: *`Map`<`string`, [TransitionGroup](../interfaces/_transition_core_.transitiongroup.md)>* =  new Map()
 
-*Defined in [transition-core.ts:3](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/transition-core.ts#L3)*
+*Defined in [transition-core.ts:3](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L3)*
 
 ___
 <a id="transitionmethods"></a>
@@ -108,19 +120,30 @@ ___
 
 **● transitionMethods**: *`Map`<`string`, `string`[]>* =  new Map()
 
-*Defined in [transition-core.ts:5](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/transition-core.ts#L5)*
+*Defined in [transition-core.ts:5](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L5)*
 
 ___
 
 ## Accessors
 
+<a id="currenttransitionevent"></a>
+
+###  currentTransitionEvent
+
+getcurrentTransitionEvent(): [EventData](../interfaces/_main_.eventdata.md)
+
+*Defined in [transition-core.ts:87](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L87)*
+
+**Returns:** [EventData](../interfaces/_main_.eventdata.md)
+
+___
 <a id="state"></a>
 
 ###  state
 
 getstate(): `string`
 
-*Defined in [transition-core.ts:78](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/transition-core.ts#L78)*
+*Defined in [transition-core.ts:83](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L83)*
 
 **Returns:** `string`
 
@@ -128,13 +151,30 @@ ___
 
 ## Methods
 
+<a id="cantransitionto"></a>
+
+###  canTransitionTo
+
+▸ **canTransitionTo**(state: *`string`*): `boolean`
+
+*Defined in [transition-core.ts:91](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L91)*
+
+**Parameters:**
+
+| Name | Type |
+| ------ | ------ |
+| state | `string` |
+
+**Returns:** `boolean`
+
+___
 <a id="getmethods"></a>
 
 ###  getMethods
 
 ▸ **getMethods**(state?: *`string`*): `string`[]
 
-*Defined in [transition-core.ts:68](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/transition-core.ts#L68)*
+*Defined in [transition-core.ts:73](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L73)*
 
 **Parameters:**
 
@@ -151,7 +191,7 @@ ___
 
 ▸ **getStates**(): `string`[]
 
-*Defined in [transition-core.ts:72](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/transition-core.ts#L72)*
+*Defined in [transition-core.ts:77](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L77)*
 
 **Returns:** `string`[]
 
@@ -160,9 +200,9 @@ ___
 
 ###  stateOnTransition
 
-▸ **stateOnTransition**(e: *[TransitionGroup](../interfaces/_transition_core_.transitiongroup.md)*, ...arg: *`any`[]*): [afterTransitionEvent](../modules/_main_.md#aftertransitionevent)
+▸ **stateOnTransition**(e: *[TransitionGroup](../interfaces/_transition_core_.transitiongroup.md)*, ...arg: *`any`[]*): `boolean`
 
-*Defined in [transition-core.ts:82](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/transition-core.ts#L82)*
+*Defined in [transition-core.ts:97](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L97)*
 
 **Parameters:**
 
@@ -171,16 +211,16 @@ ___
 | e | [TransitionGroup](../interfaces/_transition_core_.transitiongroup.md) |
 | `Rest` arg | `any`[] |
 
-**Returns:** [afterTransitionEvent](../modules/_main_.md#aftertransitionevent)
+**Returns:** `boolean`
 
 ___
 <a id="stepto"></a>
 
 ###  stepTo
 
-▸ **stepTo**(action: *`string`*, ...arg: *`any`*): [afterTransitionEvent](../modules/_main_.md#aftertransitionevent) \| `Promise`<[afterTransitionEvent](../modules/_main_.md#aftertransitionevent)>
+▸ **stepTo**(action: *`string`*, ...arg: *`any`*): `false` \| `true` \| `Promise`<`boolean`>
 
-*Defined in [transition-core.ts:38](https://github.com/TianyiLi/state-machine/blob/a39ee4e/src/transition-core.ts#L38)*
+*Defined in [transition-core.ts:39](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L39)*
 
 **Parameters:**
 
@@ -189,7 +229,7 @@ ___
 | action | `string` |
 | `Rest` arg | `any` |
 
-**Returns:** [afterTransitionEvent](../modules/_main_.md#aftertransitionevent) \| `Promise`<[afterTransitionEvent](../modules/_main_.md#aftertransitionevent)>
+**Returns:** `false` \| `true` \| `Promise`<`boolean`>
 
 ___
 

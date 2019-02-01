@@ -1,4 +1,4 @@
-import { afterTransitionEvent } from './main';
+import { EventData } from './main';
 export declare class TransitionCore {
     transitionGroups: TransitionGroup[];
     initState: string;
@@ -6,16 +6,20 @@ export declare class TransitionCore {
     private stateList;
     private transitionMethods;
     private _state;
+    private _transitionEvent;
     constructor(transitionGroups: TransitionGroup[], initState: string);
-    stepTo(action: string, ...arg: any): afterTransitionEvent | Promise<afterTransitionEvent>;
+    stepTo(action: string, ...arg: any): boolean | Promise<boolean>;
     getMethods(state?: string): string[];
     getStates(): string[];
     readonly state: string;
-    stateOnTransition(e: TransitionGroup, ...arg: any[]): afterTransitionEvent;
+    readonly currentTransitionEvent: EventData;
+    canTransitionTo(state: string): boolean;
+    stateOnTransition(e: TransitionGroup, ...arg: any[]): boolean;
 }
+export declare type AnyWhere = '*';
 export declare interface TransitionGroup {
-    guardian?: (...arg: any) => (boolean | Promise<boolean>);
-    from: string;
+    guardian?: (...arg: any) => boolean | Promise<boolean>;
+    from: string | AnyWhere;
     to: string | ((...arg: any) => string);
     action: string;
 }

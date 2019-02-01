@@ -12,5 +12,21 @@
 
 * [TransitionGroup](../interfaces/_transition_core_.transitiongroup.md)
 
+### Type aliases
+
+* [AnyWhere](_transition_core_.md#anywhere)
+
 ---
+
+## Type aliases
+
+<a id="anywhere"></a>
+
+###  AnyWhere
+
+**Ƭ AnyWhere**: *"*"*
+
+*Defined in [transition-core.ts:114](https://github.com/TianyiLi/state-machine/blob/712c073/src/transition-core.ts#L114)*
+
+___
 
