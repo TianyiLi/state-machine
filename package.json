@@ -1,6 +1,6 @@
 {
   "name": "state-machine-control",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "main": "lib/lib.js",
   "keywords": [
     "state machine",
@@ -15,7 +15,7 @@
     "build-esm": "cross-env NODE_ENV=production tsc -m commonjs --outDir lib-esm",
     "gen-doc": "typedoc --theme markdown --readme none --out docs ./src",
     "clean": "shx rm -rf dist types",
-    "prepare": "npm test && npm run clean && npm run build-prod && npm run build-dev && npm run gen-doc"
+    "prepublishOnly": "npm test && npm run clean && npm run build-prod && npm run build-dev && npm run gen-doc"
   },
   "homepage": "https://github.com/TianyiLi/state-machine",
   "repository": {
