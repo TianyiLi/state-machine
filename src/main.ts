@@ -60,10 +60,10 @@ export class StateMachine {
    * @memberof StateMachineControl
    */
   private _onTransition: TransitionFunction = {
-    '*': () => {}
+    '*': () => { }
   }
 
-  constructor(public options: Options) {
+  constructor (public options: Options) {
     this.transitionCore = new TransitionCore(
       options.transitions,
       options.initState
@@ -83,7 +83,7 @@ export class StateMachine {
    * @returns
    * @memberof StateMachineControl
    */
-  on(state: string, fn: (arg?: any) => void) {
+  on (state: string, fn: (arg?: any) => void) {
     if (!~this.transitionCore.getStates().indexOf(state)) return false
     if (this.onStateMap.has(state)) {
       this.onStateMap.get(state).push(fn)
@@ -101,7 +101,7 @@ export class StateMachine {
    * @returns
    * @memberof StateMachineControl
    */
-  once(state: string, fn: (arg?: any) => void) {
+  once (state: string, fn: (arg?: any) => void) {
     if (!~this.transitionCore.getStates().indexOf(state)) return false
     if (this.onceStateMap.has(state)) {
       this.onceStateMap.get(state).push(fn)
@@ -118,7 +118,7 @@ export class StateMachine {
    * @param {Function} fn
    * @memberof StateMachineControl
    */
-  off(state: string, fn: Function) {
+  off (state: string, fn: Function) {
     let fns = this.onStateMap.get(state)
     let onceFn = this.onceStateMap.get(state)
     if (fns && !!~fns.indexOf(fn)) {
@@ -130,12 +130,23 @@ export class StateMachine {
   }
 
   /**
+   * Clear the hook function
+   * 
+   * @param state
+   * @param fn
+   * @memberof StateMachineControl
+   */
+  removeListener (state: string, fn: Function) {
+    this.off(state, fn)
+  }
+
+  /**
    * Clear the state all hook function
    *
    * @param {string} [state]
    * @memberof StateMachineControl
    */
-  removeAllListener(state?: string) {
+  removeAllListener (state?: string) {
     if (state) {
       this.onStateMap.delete(state)
       this.onceStateMap.delete(state)
@@ -152,7 +163,7 @@ export class StateMachine {
    * @returns
    * @memberof StateMachineControl
    */
-  getMethods(state?: string) {
+  getMethods (state?: string) {
     return this.transitionCore.getMethods(state)
   }
 
@@ -162,7 +173,7 @@ export class StateMachine {
    * @returns
    * @memberof StateMachineControl
    */
-  getStateList() {
+  getStateList () {
     return this.transitionCore.getStates()
   }
 
@@ -172,7 +183,7 @@ export class StateMachine {
    * @returns
    * @memberof StateMachineControl
    */
-  getState() {
+  getState () {
     return this.transitionCore.state
   }
 
@@ -184,7 +195,7 @@ export class StateMachine {
    * @returns
    * @memberof StateMachineControl
    */
-  step(
+  step (
     action: string,
     ...args
   ): afterTransitionEvent | Promise<afterTransitionEvent> {
@@ -238,7 +249,7 @@ export class StateMachine {
     }
   }
 
-  private execTransition() {
+  private execTransition () {
     let transitionData = this.transitionCore.currentTransitionEvent
     if (typeof this._onTransition === 'function') {
       this._onTransition(transitionData)
@@ -258,9 +269,9 @@ export class StateMachine {
     }
   }
 
-  private runHookFunction() {
+  private runHookFunction () {
     let transitionData = this.transitionCore.currentTransitionEvent
-    let {on, arg} = transitionData
+    let { on, arg } = transitionData
     let fn = this.onStateMap.get(on)
     let onceFn = this.onceStateMap.get(on)
     if (fn) {
@@ -280,7 +291,7 @@ export class StateMachine {
    * @returns
    * @memberof StateMachineControl
    */
-  can(action: string) {
+  can (action: string) {
     return !!~this.transitionCore.getMethods().indexOf(action)
   }
 
@@ -289,7 +300,7 @@ export class StateMachine {
    *
    * @param state Next state you want to transition to
    */
-  canTransitionTo(state: string) {
+  canTransitionTo (state: string) {
     return this.transitionCore.canTransitionTo(state)
   }
 }

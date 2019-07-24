@@ -18,7 +18,7 @@
 
 ▸ **fnsHasPromise**<`T`>(..._type: *`T`[]*): `boolean`
 
-*Defined in [util.ts:1](https://github.com/TianyiLi/state-machine/blob/f345f97/src/util.ts#L1)*
+*Defined in [util.ts:1](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/util.ts#L1)*
 
 **Type parameters:**
 

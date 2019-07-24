@@ -26,7 +26,7 @@
 
 **Ƭ AnyWhere**: *"*"*
 
-*Defined in [transition-core.ts:114](https://github.com/TianyiLi/state-machine/blob/f345f97/src/transition-core.ts#L114)*
+*Defined in [transition-core.ts:114](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/transition-core.ts#L114)*
 
 ___
 

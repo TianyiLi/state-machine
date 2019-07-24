@@ -83,6 +83,14 @@ export declare class StateMachine {
      */
     off(state: string, fn: Function): void;
     /**
+     * Clear the hook function
+     *
+     * @param state
+     * @param fn
+     * @memberof StateMachineControl
+     */
+    removeListener(state: string, fn: Function): void;
+    /**
      * Clear the state all hook function
      *
      * @param {string} [state]

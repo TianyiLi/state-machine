@@ -1,12 +1,15 @@
 {
   "name": "state-machine-control",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "main": "lib/lib.js",
   "keywords": [
     "state machine",
     "state-machine",
-    "state machine control"
-  ],  
+    "state machine control",
+    "state-machine-control",
+    "finite state machine",
+    "finite-state-machine"
+  ],
   "scripts": {
     "test": "mocha",
     "test-coverage": "nyc --reporter=html --reporter=text mocha",
@@ -61,11 +64,10 @@
     "ts-loader": "^5.3.3",
     "ts-node": "^8.0.1",
     "typedoc": "^0.14.2",
+    "typedoc-plugin-markdown": "^1.1.25",
     "typescript": "^3.2.4",
     "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1",
-    "typedoc-plugin-markdown": "^1.1.25"
+    "webpack-cli": "^3.2.1"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

@@ -122,7 +122,7 @@ describe('StateMachineControl test', () => {
     assert.equal(time, 1)
     done()
   })
-  it('off should be work', done => {
+  it('off and removeListener should be work', done => {
     let smc = createStateMachine(() => {})
     let on = function(arg) {
       done('get trigger')
@@ -136,7 +136,7 @@ describe('StateMachineControl test', () => {
     smc.once('b', on)
     smc.off('b', on)
     smc.on('a', on)
-    smc.off('a', on)
+    smc.removeListener('a', on)
     smc.step('start')
     smc.step('next')
     assert.equal(smc.getState(), 'b')

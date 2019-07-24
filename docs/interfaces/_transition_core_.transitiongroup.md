@@ -25,7 +25,7 @@
 
 **● action**: *`string`*
 
-*Defined in [transition-core.ts:119](https://github.com/TianyiLi/state-machine/blob/f345f97/src/transition-core.ts#L119)*
+*Defined in [transition-core.ts:119](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/transition-core.ts#L119)*
 
 ___
 <a id="from"></a>
@@ -34,7 +34,7 @@ ___
 
 **● from**: *`string` \| [AnyWhere](../modules/_transition_core_.md#anywhere)*
 
-*Defined in [transition-core.ts:117](https://github.com/TianyiLi/state-machine/blob/f345f97/src/transition-core.ts#L117)*
+*Defined in [transition-core.ts:117](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/transition-core.ts#L117)*
 
 ___
 <a id="guardian"></a>
@@ -43,7 +43,7 @@ ___
 
 **● guardian**: *`function`*
 
-*Defined in [transition-core.ts:116](https://github.com/TianyiLi/state-machine/blob/f345f97/src/transition-core.ts#L116)*
+*Defined in [transition-core.ts:116](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/transition-core.ts#L116)*
 
 #### Type declaration
 ▸(...arg: *`any`*): `boolean` \| `Promise`<`boolean`>
@@ -63,7 +63,7 @@ ___
 
 **● to**: *`string` \| `function`*
 
-*Defined in [transition-core.ts:118](https://github.com/TianyiLi/state-machine/blob/f345f97/src/transition-core.ts#L118)*
+*Defined in [transition-core.ts:118](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/transition-core.ts#L118)*
 
 ___
 
