@@ -1,2 +1,2 @@
 const ghpages = require('gh-pages')
-ghpages.publish('example', console.log)
+ghpages.publish('example/html', console.log)
