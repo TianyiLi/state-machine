@@ -14,6 +14,7 @@
 
 ### Properties
 
+* [_onTransitionEndFns](_main_.statemachine.md#_ontransitionendfns)
 * [currentState](_main_.statemachine.md#currentstate)
 * [isPending](_main_.statemachine.md#ispending)
 * [onStateMap](_main_.statemachine.md#onstatemap)
@@ -30,7 +31,9 @@
 * [getState](_main_.statemachine.md#getstate)
 * [getStateList](_main_.statemachine.md#getstatelist)
 * [off](_main_.statemachine.md#off)
+* [offTransitionEnd](_main_.statemachine.md#offtransitionend)
 * [on](_main_.statemachine.md#on)
+* [onTransitionEnd](_main_.statemachine.md#ontransitionend)
 * [once](_main_.statemachine.md#once)
 * [removeAllListener](_main_.statemachine.md#removealllistener)
 * [removeListener](_main_.statemachine.md#removelistener)
@@ -51,7 +54,7 @@
 
 ⊕ **new StateMachine**(options: *[Options](../interfaces/_main_.options.md)*): [StateMachine](_main_.statemachine.md)
 
-*Defined in [main.ts:64](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L64)*
+*Defined in [main.ts:74](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L74)*
 
 **Parameters:**
 
@@ -65,13 +68,28 @@ ___
 
 ## Properties
 
+<a id="_ontransitionendfns"></a>
+
+### `<Private>` _onTransitionEndFns
+
+**● _onTransitionEndFns**: *`Set`<`Function`>* =  new Set()
+
+*Defined in [main.ts:74](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L74)*
+
+When transition finish, run hook on functions Same as return object
+
+*__type__*: {Set}
+
+*__memberof__*: StateMachine
+
+___
 <a id="currentstate"></a>
 
 ###  currentState
 
 **● currentState**: *`string`*
 
-*Defined in [main.ts:34](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L34)*
+*Defined in [main.ts:34](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L34)*
 
 Current State
 
@@ -86,7 +104,7 @@ ___
 
 **● isPending**: *`boolean`* = false
 
-*Defined in [main.ts:54](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L54)*
+*Defined in [main.ts:54](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L54)*
 
 Transition is pending
 
@@ -99,7 +117,7 @@ ___
 
 **● onStateMap**: *`Map`<`string`, `Function`[]>* =  new Map()
 
-*Defined in [main.ts:41](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L41)*
+*Defined in [main.ts:41](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L41)*
 
 Total Events hook function
 
@@ -114,7 +132,7 @@ ___
 
 **● onceStateMap**: *`Map`<`string`, `Function`[]>* =  new Map()
 
-*Defined in [main.ts:48](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L48)*
+*Defined in [main.ts:48](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L48)*
 
 Total Events hook function `once`
 
@@ -129,7 +147,7 @@ ___
 
 **● options**: *[Options](../interfaces/_main_.options.md)*
 
-*Defined in [main.ts:66](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L66)*
+*Defined in [main.ts:76](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L76)*
 
 ___
 <a id="transitioncore"></a>
@@ -138,7 +156,7 @@ ___
 
 **● transitionCore**: *[TransitionCore](_transition_core_.transitioncore.md)*
 
-*Defined in [main.ts:27](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L27)*
+*Defined in [main.ts:27](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L27)*
 
 *__remark__*: Transition Core
 
@@ -152,7 +170,7 @@ ___
 
 ▸ **can**(action: *`string`*): `boolean`
 
-*Defined in [main.ts:294](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L294)*
+*Defined in [main.ts:316](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L316)*
 
 Check can do the action
 
@@ -173,7 +191,7 @@ ___
 
 ▸ **canTransitionTo**(state: *`string`*): `boolean`
 
-*Defined in [main.ts:303](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L303)*
+*Defined in [main.ts:325](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L325)*
 
 Check can transition to the state
 
@@ -192,7 +210,7 @@ ___
 
 ▸ **execTransition**(): `true` \| `Promise`<`boolean`>
 
-*Defined in [main.ts:252](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L252)*
+*Defined in [main.ts:265](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L265)*
 
 **Returns:** `true` \| `Promise`<`boolean`>
 
@@ -203,7 +221,7 @@ ___
 
 ▸ **getMethods**(state?: *`string`*): `string`[]
 
-*Defined in [main.ts:166](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L166)*
+*Defined in [main.ts:176](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L176)*
 
 Get current or specific state functions
 
@@ -224,7 +242,7 @@ ___
 
 ▸ **getState**(): `string`
 
-*Defined in [main.ts:186](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L186)*
+*Defined in [main.ts:196](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L196)*
 
 Get current state
 
@@ -239,7 +257,7 @@ ___
 
 ▸ **getStateList**(): `string`[]
 
-*Defined in [main.ts:176](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L176)*
+*Defined in [main.ts:186](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L186)*
 
 Get all states
 
@@ -254,7 +272,7 @@ ___
 
 ▸ **off**(state: *`string`*, fn: *`Function`*): `void`
 
-*Defined in [main.ts:121](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L121)*
+*Defined in [main.ts:131](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L131)*
 
 Clear the hook function
 
@@ -270,13 +288,30 @@ Clear the hook function
 **Returns:** `void`
 
 ___
+<a id="offtransitionend"></a>
+
+###  offTransitionEnd
+
+▸ **offTransitionEnd**(fns: *`Function`*): `void`
+
+*Defined in [main.ts:333](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L333)*
+
+**Parameters:**
+
+| Name | Type |
+| ------ | ------ |
+| fns | `Function` |
+
+**Returns:** `void`
+
+___
 <a id="on"></a>
 
 ###  on
 
 ▸ **on**(state: *`string`*, fn: *`function`*): `boolean`
 
-*Defined in [main.ts:86](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L86)*
+*Defined in [main.ts:96](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L96)*
 
 Setting on state hook function
 
@@ -292,13 +327,30 @@ Setting on state hook function
 **Returns:** `boolean`
 
 ___
+<a id="ontransitionend"></a>
+
+###  onTransitionEnd
+
+▸ **onTransitionEnd**(fns: *`Function`*): `void`
+
+*Defined in [main.ts:329](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L329)*
+
+**Parameters:**
+
+| Name | Type |
+| ------ | ------ |
+| fns | `Function` |
+
+**Returns:** `void`
+
+___
 <a id="once"></a>
 
 ###  once
 
 ▸ **once**(state: *`string`*, fn: *`function`*): `boolean`
 
-*Defined in [main.ts:104](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L104)*
+*Defined in [main.ts:114](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L114)*
 
 Setting on state hook function `once`
 
@@ -320,7 +372,7 @@ ___
 
 ▸ **removeAllListener**(state?: *`string`*): `void`
 
-*Defined in [main.ts:149](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L149)*
+*Defined in [main.ts:159](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L159)*
 
 Clear the state all hook function
 
@@ -341,7 +393,7 @@ ___
 
 ▸ **removeListener**(state: *`string`*, fn: *`Function`*): `void`
 
-*Defined in [main.ts:139](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L139)*
+*Defined in [main.ts:149](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L149)*
 
 Clear the hook function
 
@@ -363,7 +415,7 @@ ___
 
 ▸ **runHookFunction**(): `void`
 
-*Defined in [main.ts:272](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L272)*
+*Defined in [main.ts:291](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L291)*
 
 **Returns:** `void`
 
@@ -374,7 +426,7 @@ ___
 
 ▸ **step**(action: *`string`*, ...args: *`any`[]*): [afterTransitionEvent](../modules/_main_.md#aftertransitionevent) \| `Promise`<[afterTransitionEvent](../modules/_main_.md#aftertransitionevent)>
 
-*Defined in [main.ts:198](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L198)*
+*Defined in [main.ts:208](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L208)*
 
 Trigger transition
 
@@ -399,7 +451,7 @@ ___
 
 **_onTransition**: *`object`*
 
-*Defined in [main.ts:62](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L62)*
+*Defined in [main.ts:62](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L62)*
 
 TransitionFunction would be run after transition success, can accept async function
 
@@ -413,7 +465,7 @@ TransitionFunction would be run after transition success, can accept async funct
 
 ▸ *****(): `void`
 
-*Defined in [main.ts:63](https://github.com/TianyiLi/state-machine/blob/f7af4f8/src/main.ts#L63)*
+*Defined in [main.ts:63](https://github.com/TianyiLi/state-machine/blob/68d1224/src/main.ts#L63)*
 
 **Returns:** `void`
 

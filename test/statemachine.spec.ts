@@ -233,4 +233,21 @@ describe('StateMachineControl test', () => {
     assert.equal(smc.canTransitionTo('b'), false)
     assert.equal(smc.canTransitionTo('a'), true)
   })
+
+  it ('when transition false, the pending should be false', () => {
+    let smc = createStateMachine()
+    assert.equal(smc.step('b'), false)
+    assert.equal(smc.isPending, false)
+  })
+
+  it('Wait Transition finish', (done) => {
+    let smc = createStateMachine(async () => {
+      await sleep(2)
+    })
+    smc.on('a', () => {
+      done()
+    })
+    smc.step('start')
+    assert.equal(smc.isPending, true)
+  })
 })

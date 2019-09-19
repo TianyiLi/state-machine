@@ -63,6 +63,16 @@ export class StateMachine {
     '*': () => { }
   }
 
+  /**
+   * When transition finish, run hook on functions
+   * Same as return object
+   *
+   * @private
+   * @type {Set<Function>}
+   * @memberof StateMachine
+   */
+  private _onTransitionEndFns: Set<Function> = new Set()
+
   constructor (public options: Options) {
     this.transitionCore = new TransitionCore(
       options.transitions,
@@ -207,7 +217,10 @@ export class StateMachine {
     try {
       this.isPending = true
       result = this.transitionCore.stepTo(action, ...args)
-      if (!result) return false
+      if (!result) {
+        this.isPending = false
+        return false
+      }
     } catch (error) {
       this.isPending = false
       throw error
@@ -252,8 +265,14 @@ export class StateMachine {
   private execTransition () {
     let transitionData = this.transitionCore.currentTransitionEvent
     if (typeof this._onTransition === 'function') {
-      this._onTransition(transitionData)
-      return true
+      let result = this._onTransition(transitionData)
+      if (fnsHasPromise(result)) {
+        return Promise.resolve()
+          .then(() => result)
+          .then(() => true)
+      } else {
+        return true
+      }
     } else {
       let all = this._onTransition['*'] && this._onTransition['*'](transitionData)
       let current =
@@ -282,6 +301,9 @@ export class StateMachine {
         onceFn.shift()(...arg)
       }
     }
+    if (this._onTransitionEndFns.size) {
+      this._onTransitionEndFns.forEach(f => f(transitionData))
+    }
   }
 
   /**
@@ -302,6 +324,14 @@ export class StateMachine {
    */
   canTransitionTo (state: string) {
     return this.transitionCore.canTransitionTo(state)
+  }
+
+  onTransitionEnd (fns: Function) {
+    this._onTransitionEndFns.add(fns)
+  }
+
+  offTransitionEnd (fns: Function) {
+    this._onTransitionEndFns.delete(fns)
   }
 }
 

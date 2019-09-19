@@ -55,6 +55,15 @@ export declare class StateMachine {
      * @memberof StateMachineControl
      */
     private _onTransition;
+    /**
+     * When transition finish, run hook on functions
+     * Same as return object
+     *
+     * @private
+     * @type {Set<Function>}
+     * @memberof StateMachine
+     */
+    private _onTransitionEndFns;
     constructor(options: Options);
     /**
      * Setting on state hook function
@@ -144,5 +153,7 @@ export declare class StateMachine {
      * @param state Next state you want to transition to
      */
     canTransitionTo(state: string): boolean;
+    onTransitionEnd(fns: Function): void;
+    offTransitionEnd(fns: Function): void;
 }
 export default StateMachine;
