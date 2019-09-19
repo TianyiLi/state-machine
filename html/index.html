@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Document</title>
+  <script src="./lib.js"></script>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+      font-size: 20px;
+    }
+
+    #app {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 5em;
+    }
+
+    #app .btn-group {
+      width: 100%;
+      margin: 0 auto;
+      grid-gap: 10px;
+      justify-content: space-around;
+    }
+
+    .input-group {
+      margin: 10px 0;
+      display: flex;
+    }
+
+    .arg {}
+
+    .input-group .btn {}
+
+    .input-group input {
+      margin-left: 15px;
+      width: 150px;
+      padding: 0 1rem;
+    }
+
+    .btn {
+      box-sizing: border-box;
+      border: 0;
+      padding: .3rem .6rem;
+      width: 150px;
+      font-size: 1em;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #dedede;
+    }
+
+    .state-group {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 70%;
+      margin: 0 auto;
+    }
+
+    .gap {
+      width: 5rem;
+      height: 2px;
+      background-color: #000;
+      border: 1em solid white;
+    }
+
+    .state {
+      padding: 1.3rem 1.6rem;
+      font-size: 24px;
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      border-radius: 16px;
+      border: solid 1px black;
+      cursor: pointer;
+    }
+
+    .state.active {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      cursor: initial;
+    }
+
+    .sub-title {
+      font-size: 18px;
+    }
+
+    #pending-hint {
+      visibility: hidden;
+    }
+
+    #pending-hint.active {
+      visibility: visible;
+    }
+
+    #pending-hint div {
+      width: 40px;
+      height: 40px;
+      margin: 50px auto;
+      border: 5px solid #999;
+      border-radius: 50%;
+      border-left: 5px solid #080;
+      animation: spinner 1s infinite linear
+    }
+
+    @keyframes spinner {
+      0% {
+        transform: rotate(0deg)
+      }
+
+      100% {
+        transform: rotate(360deg)
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <h1>Example Of state-machine-control</h1>
+    <div class="sub-title">Please open console to see the transition log</div>
+    <div class="btn-group">
+      <button id="start" class="btn method">start</button>
+      <button id="read" class="btn method">read</button>
+      <button id="stop" class="btn method">stop</button>
+      <button id="reset" class="btn method">reset</button>
+      <div class="input-group">
+        <div class="btn">arg</div>
+        <input type="text" id="arg" value="" placeholder="arg">
+      </div>
+      <div class="input-group">
+        <button id="goto" class="btn">goto</button>
+        <input type="text" name="" id="state-input">
+      </div>
+      <div class="input-group">
+        <button id="sleep" class="btn">sleep</button>
+        <input type="number" id="sleep-input" value="0">
+      </div>
+    </div>
+    <div class="state-group">
+      <span id="none" class="state">none</span>
+      <span class="gap" title="start"></span>
+      <span id="START" class="state">START</span>
+      <span class="gap"></span>
+      <span id="END" class="state">END</span>
+    </div>
+    <div id="pending-hint">
+      <div class="loading-spin"></div>
+    </div>
+  </div>
+</body>
+
+</html>
+<script>
+  function onTransition(transition) {
+    console.dir(transition)
+    if (document.getElementById('sleep-input').value !== '0') {
+      return new Promise((res, rej) => {
+        setTimeout(() => {
+          console.log('running')
+          res()
+        }, +document.getElementById('sleep-input').value * 1000)
+      })
+    }
+  }
+
+  function onStateChange(transition) {
+    console.log(transition)
+    document.getElementById(transition.before).classList.remove('active')
+    document.getElementById(transition.on).classList.add('active')
+    document.getElementById('pending-hint').classList.remove('active')
+  }
+  let smc = new StateMachine({
+    onTransition: onTransition,
+    initState: 'none',
+    transitions: [
+      {
+        action: 'goto',
+        from: '*',
+        to: function (s) {
+          return s
+        }
+      },
+      {
+        from: 'none',
+        action: 'start',
+        to: 'START',
+        guardian(argv = {}) {
+          console.log('guardian get arg', argv)
+          return true
+        }
+      },
+      { from: 'START', action: 'read', to: 'START' },
+      { from: 'START', action: 'stop', to: 'END' },
+      { from: 'END', action: 'reset', to: 'none' }
+    ]
+  })
+
+  document.getElementById(smc.getState()).classList.add('active')
+
+  let methodOnClick = function () {
+    let arg = document.getElementById('arg').value
+    try {
+      arg = JSON.parse(arg)
+    } catch (error) {
+
+    }
+    console.log(this.innerText)
+    document.getElementById('pending-hint').classList.add('active')
+    let state = smc.step(this.innerText, arg)
+    if (!state) {
+      document.getElementById('pending-hint').classList.remove('active')
+    }
+  }
+  document.querySelectorAll('.method').forEach(e => e.onclick = methodOnClick)
+  document.querySelectorAll('.state').forEach(function (e) {
+    e.onclick = function () {
+      console.log(this.innerText)
+      if (!smc.isPending) {
+        document.getElementById('pending-hint').classList.add('active')
+        smc.step('goto', this.innerText)
+      }
+    }
+  })
+
+  document.getElementById('goto').onclick = () => {
+    let nextState = document.getElementById('state-input').value
+    if (document.getElementById('state-input').value) {
+      if (smc.getStateList().includes(nextState)) {
+        document.getElementById('pending-hint').classList.add('active')
+        smc.step('goto', nextState)
+      } else {
+        alert('input state name incorrect!')
+      }
+      document.getElementById('state-input').value = ''
+    }
+  }
+
+  smc.onTransitionEnd(onStateChange)
+</script>
