@@ -120,4 +120,6 @@ const smc = new StateMachine(/* bla bla bla*/)
 
 about API usage watch [Document](docs/README.md)
 
-about sample watch [Sample](https://)
+about HTML sample [Sample](https://tianyili.github.io/state-machine)
+
+also in [example](example)
