@@ -35,19 +35,7 @@ yarn test
 
 ### Life cycle
 
-```flow
-st=>start: Start
-e=>end: End
-step=>operation: stepTo(state)
-g=>condition: guardian(...arg) (async)
-if no Don't do the transition
-ot=>operation: onTransition(async)
-oh=>operation: onState function (on/once)
-
-st->step->g
-g(yes)->ot->oh->e
-g(no)->step(right)
-```
+![LifeCycle](./lifecycle.png)
 
 ### Example
 
