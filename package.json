@@ -1,6 +1,6 @@
 {
   "name": "state-machine-control",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "main": "lib/lib.js",
   "keywords": [
     "state machine",
