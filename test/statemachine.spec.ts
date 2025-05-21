@@ -66,14 +66,14 @@ function createStateMachine(cb: TransitionFunction = { '*': console.dir }) {
 }
 
 describe('StateMachineControl test', () => {
-  it('synchronous transition is good', () => {
+  it('synchronous transition is good', async () => {
     let smc = createStateMachine(null)
-    smc.step('start')
-    smc.step('next')
+    await smc.step('start')
+    await smc.step('next')
     assert.equal(smc.getState(), 'b')
     assert.equal(smc.can('next'), true)
     assert.equal(smc.isPending, false)
-    assert.equal(smc.step('start'), false)
+    assert.equal(await smc.step('start'), false)
     assert.deepEqual(smc.getMethods(), ['next', 'reject', 'sleep'])
   })
   it('onTransition should be work', done => {
@@ -92,17 +92,17 @@ describe('StateMachineControl test', () => {
   it('async guardian should work well', async function () {
     this.timeout(10 * 1000)
     let smc = createStateMachine(() => {})
-    smc.step('goto', 'b')
+    await smc.step('goto', 'b')
     let timestamp = Date.now()
     await smc.step('sleep', true)
     assert.equal(Date.now() - timestamp >= 500, true)
     assert.equal(smc.getState(), 'c')
     timestamp = Date.now()
-    smc.step('goto', 'b')
+    await smc.step('goto', 'b')
     assert.equal(smc.getState(), 'b')
-    await smc.step('sleep')
-    assert.equal(Date.now() - timestamp >= 500, true)
-    assert.equal(smc.getState(), 'b')
+    await smc.step('sleep') // Guardian returns undefined (falsy), so no state change from 'b'
+    assert.equal(Date.now() - timestamp >= 500, true) // Should have waited for guardian
+    assert.equal(smc.getState(), 'b') // State should remain 'b'
   })
   it('on state should be work', done => {
     let smc = createStateMachine(() => {})
@@ -111,57 +111,64 @@ describe('StateMachineControl test', () => {
     smc.on('a', arg => ((time += 1), time === 2 && done()))
     smc.step('start')
   })
-  it('once only can be trigger one times', done => {
+  it('once only can be trigger one times', async () => {
     let smc = createStateMachine(() => {})
     let time = 0
-    smc.once('a', arg => ((time += 1), time === 2 && done()))
-    smc.once('a', arg => ((time += 1), time === 2 && done()))
-    smc.step('start')
-    smc.step('next')
-    smc.step('reject')
-    assert.equal(time, 1)
-    done()
+    smc.once('a', arg => { time += 1 })
+    smc.once('a', arg => { time += 1 })
+    await smc.step('start') // State 'a', both once handlers run, time = 2
+    await smc.step('next')  // State 'b'
+    await smc.step('reject') // State 'a' again, once handlers should not run again
+    assert.equal(time, 2) // Check that time is 2
   })
-  it('off and removeListener should be work', done => {
+  it('off and removeListener should be work', async () => {
     let smc = createStateMachine(() => {})
-    let on = function(arg) {
-      done('get trigger')
+    // Dummy function for listeners, its execution would mean 'off' didn't work
+    let listenerShouldNotBeCalled = function(arg) {
+      throw new Error("Listener was called but should have been removed.");
     }
-    assert.equal(smc.on('a', on), true)
-    assert.equal(smc.once('a', on), true)
-    smc.off('a', on)
-    smc.step('start')
+    assert.equal(smc.on('a', listenerShouldNotBeCalled), true)
+    assert.equal(smc.once('a', listenerShouldNotBeCalled), true)
+    smc.off('a', listenerShouldNotBeCalled) // Remove both 'on' and 'once' for 'a'
+    
+    await smc.step('start') // none -> a
     assert.equal(smc.getState(), 'a')
-    smc.step('goto', 'none')
-    smc.once('b', on)
-    smc.off('b', on)
-    smc.on('a', on)
-    smc.removeListener('a', on)
-    smc.step('start')
-    smc.step('next')
+    
+    await smc.step('goto', 'none') // a -> none
+    
+    smc.once('b', listenerShouldNotBeCalled)
+    smc.off('b', listenerShouldNotBeCalled) // Register then remove 'once' for 'b'
+    
+    smc.on('a', listenerShouldNotBeCalled)
+    smc.removeListener('a', listenerShouldNotBeCalled) // Register then remove 'on' for 'a' (alias for off)
+    
+    await smc.step('start') // none -> a (listenerShouldNotBeCalled should not run)
+    await smc.step('next')  // a -> b (listenerShouldNotBeCalled for 'b' should not run)
     assert.equal(smc.getState(), 'b')
-    done()
   })
   it('get state list should be work', () => {
     let smc = createStateMachine(() => {})
     assert.deepEqual(smc.getStateList(), ['none', 'a', 'b', 'c'])
   })
-  it('removeAllListener should work', done => {
+  it('removeAllListener should work', async () => {
     let smc = createStateMachine()
+    let listenerCalled = false;
     let on = () => {
-      done('get trigger')
+      listenerCalled = true;
     }
     smc.on('a', on)
     smc.on('b', on)
     smc.removeAllListener('a')
-    smc.step('start')
-    smc.removeAllListener()
-    smc.step('next')
-    done()
+    await smc.step('start') // none -> a
+    assert.equal(listenerCalled, false, "Listener for 'a' should have been removed")
+    
+    smc.removeAllListener() // Remove all listeners including for 'b'
+    await smc.step('next') // a -> b
+    assert.equal(listenerCalled, false, "Listener for 'b' should have been removed by removeAllListeners()")
   })
-  it('step params should same', () => {
+  it('step params should same', async () => {
     let smc = createStateMachine()
-    assert.deepEqual(smc.step('start', { test: 123 }), {
+    assert.deepEqual(await smc.step('start', { test: 123 }), {
       before: 'none',
       on: 'a',
       action: 'start',
@@ -173,33 +180,41 @@ describe('StateMachineControl test', () => {
     assert.deepEqual(smc.on('nostuff', () => {}), false)
     assert.deepEqual(smc.once('nostuff', () => {}), false)
   })
-  it('step to non set action should be none', () => {
+  it('step to non set action should be none', async () => {
     let smc = createStateMachine()
-    assert.equal(smc.step('no'), false)
+    assert.equal(await smc.step('no'), false)
   })
-  it('isPending test', done => {
+  it('isPending test', async () => {
     let smc = createStateMachine({
       a: async ({ arg }) => {
-        console.log(arg)
+        // console.log(arg) // Removed console.log
         await sleep(arg[0].sec)
       }
     })
-    let _fn = smc.step('start', { sec: 1 })
-    if (_fn instanceof Promise) {
-      _fn.then(res => done())
-    }
-    assert.equal(smc.isPending, true)
-    assert.equal(smc.step('next'), false)
+    // Use a flag to see if the main part of step completed
+    let stepCompleted = false;
+    const stepPromise = smc.step('start', { sec: 1 });
+    // isPending should be true immediately after calling step, before it resolves
+    assert.equal(smc.isPending, true, "isPending should be true immediately after step call")
+    assert.equal(await smc.step('next'), false, "Should not allow another step while pending")
+
+    await stepPromise; // Wait for the step to actually complete
+    stepCompleted = true;
+    
+    assert.equal(smc.isPending, false, "isPending should be false after step completion")
+    assert.equal(stepCompleted, true, "The step itself should complete")
   })
-  it('sync error test, pending should be clear', () => {
+  it('sync error test, pending should be clear', async () => {
     let smc = createStateMachine({
-      a: arg => {
+      a: arg => { // Synchronous callback that throws
         throw new Error('test')
       }
     })
-    assert.throws(() => {
-      smc.step('start')
-    })
+    await assert.rejects(
+      smc.step('start'), // This will return a Promise that rejects
+      Error, // Optional: check for specific error type
+      'test'   // Optional: check for specific error message
+    )
     assert.equal(smc.isPending, false)
   })
   it('async error test, pending should be clear', async () => {
@@ -211,9 +226,13 @@ describe('StateMachineControl test', () => {
     await assert.rejects(smc.step.bind(smc, 'start'))
     assert.equal(smc.isPending, false)
   })
-  it ('guardian error, pending should be clear', () => {
+  it ('guardian error, pending should be clear', async () => {
     let smc = createStateMachine()
-    assert.throws(() => smc.step('guardianError'))
+    await assert.rejects(
+      smc.step('guardianError'),
+      Error,
+      'guardian error'
+    )
     assert.equal(smc.isPending, false)
   })
   it ('async guardian error, pending should be clear', async () => {
@@ -234,20 +253,28 @@ describe('StateMachineControl test', () => {
     assert.equal(smc.canTransitionTo('a'), true)
   })
 
-  it ('when transition false, the pending should be false', () => {
+  it ('when transition false, the pending should be false', async () => {
     let smc = createStateMachine()
-    assert.equal(smc.step('b'), false)
+    assert.equal(await smc.step('b'), false) // Action 'b' is not valid from initial state 'none'
     assert.equal(smc.isPending, false)
   })
 
-  it('Wait Transition finish', (done) => {
+  it('Wait Transition finish', async () => {
+    let transitionFinished = false;
     let smc = createStateMachine(async () => {
       await sleep(2)
+      transitionFinished = true;
     })
+    let onACalled = false;
     smc.on('a', () => {
-      done()
+      onACalled = true;
     })
-    smc.step('start')
-    assert.equal(smc.isPending, true)
+    const stepPromise = smc.step('start');
+    // isPending should be true immediately
+    assert.equal(smc.isPending, true, "isPending should be true right after calling step");
+    await stepPromise; // Wait for the step to complete
+    assert.equal(smc.isPending, false, "isPending should be false after step is fully done");
+    assert.equal(transitionFinished, true, "The async onTransition should have completed");
+    assert.equal(onACalled, true, "The on('a') listener should have been called");
   })
 })

@@ -57,9 +57,9 @@ describe('Transition core test', () => {
       assert.deepEqual(tc.getMethods(), ['start'])
       assert.deepEqual(tc.getMethods('*'), ['goto'])
     })
-    it('should not be transition', () => {
+    it('should not be transition', async () => {
       let tc = createTc()
-      assert.equal(tc.stepTo('next'), false)
+      assert.equal(await tc.stepTo('next'), false)
     })
     it('repeated method and from should throw error', () => {
       assert.throws(
@@ -83,9 +83,9 @@ describe('Transition core test', () => {
           )
       )
     })
-    it('method start should be work', () => {
+    it('method start should be work', async () => {
       let tc = createTc()
-      tc.stepTo('start')
+      await tc.stepTo('start')
       assert.deepEqual(tc.currentTransitionEvent, {
         before: 'none',
         on: 'a',
@@ -94,13 +94,13 @@ describe('Transition core test', () => {
       })
       assert.equal(tc.state, 'a')
     })
-    it('custom to should still in state list', () => {
+    it('custom to should still in state list', async () => {
       let tc = createTc()
-      assert.equal(tc.stepTo('goto', 'Cannot achive'), false)
+      assert.equal(await tc.stepTo('goto', 'Cannot achive'), false)
     })
-    it('param pass should be work', () => {
+    it('param pass should be work', async () => {
       let tc = createTc()
-      tc.stepTo('start', 1, 2, 3)
+      await tc.stepTo('start', 1, 2, 3)
       assert.deepEqual(tc.currentTransitionEvent, {
         before: 'none',
         on: 'a',
@@ -108,18 +108,18 @@ describe('Transition core test', () => {
         arg: [1, 2, 3]
       })
     })
-    it('method guardian should be work', () => {
+    it('method guardian should be work', async () => {
       let tc = createTc()
-      tc.stepTo('start')
-      tc.stepTo('next')
-      assert.equal(tc.stepTo('reject', { test: false }), false)
+      await tc.stepTo('start')
+      await tc.stepTo('next')
+      assert.equal(await tc.stepTo('reject', { test: false }), false)
     })
-    it('goto can go anywhere!', () => {
+    it('goto can go anywhere!', async () => {
       let tc = createTc()
-      tc.stepTo('start')
-      tc.stepTo('next')
+      await tc.stepTo('start')
+      await tc.stepTo('next')
       assert.equal(tc.state, 'b')
-      tc.stepTo('goto', 'none')
+      await tc.stepTo('goto', 'none')
       assert.equal(tc.state, 'none')
     })
   })

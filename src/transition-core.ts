@@ -36,10 +36,10 @@ export class TransitionCore {
     this.stateOnTransition = this.stateOnTransition.bind(this)
   }
 
-  stepTo(
+  async stepTo(
     action: string,
     ...arg: any
-  ) {
+  ): Promise<boolean> {
     let prevState = this._state
     let key = `${this._state}/${action}`
     if (this.transitionMap.has(`*/${action}`)) {
@@ -49,20 +49,9 @@ export class TransitionCore {
       return false
     }
     const group = Object.assign({}, this.transitionMap.get(key))
-    let guardian = group.guardian ? group.guardian(...arg) : true
-    if (guardian instanceof Promise) {
-      return Promise.resolve()
-        .then(() => guardian)
-        .then(res => {
-          group.from = prevState
-          return res
-        })
-        .then(res => {
-          if (res) {
-            return this.stateOnTransition(group, ...arg)
-          } else return false
-        })
-    } else if (guardian) {
+    let guardianResult = group.guardian ? await group.guardian(...arg) : true
+    
+    if (guardianResult) {
       group.from = prevState
       return this.stateOnTransition(group, ...arg)
     } else {
