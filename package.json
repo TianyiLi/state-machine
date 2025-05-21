@@ -13,8 +13,8 @@
   "scripts": {
     "test": "mocha",
     "test-coverage": "nyc --reporter=html --reporter=text mocha",
-    "build-dev": "cross-env NODE_ENV=development webpack",
-    "build-prod": "cross-env NODE_ENV=production webpack",
+    "build-dev": "bun build ./src/main.ts --outdir ./lib --target browser",
+    "build-prod": "bun build ./src/main.ts --outdir ./lib --target browser --minify",
     "build-esm": "cross-env NODE_ENV=production tsc -m commonjs --outDir lib-esm",
     "gen-doc": "typedoc --theme markdown --readme none --out docs ./src",
     "clean": "shx rm -rf dist types",
@@ -57,17 +57,17 @@
   "devDependencies": {
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.19",
-    "awesome-typescript-loader": "^5.2.1",
+    "bun-types": "^1.0.0",
+    "gh-pages": "^2.1.1",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
     "source-map-support": "^0.5.10",
-    "ts-loader": "^5.3.3",
     "ts-node": "^8.0.1",
     "typedoc": "^0.14.2",
     "typedoc-plugin-markdown": "^1.1.25",
-    "typescript": "^3.2.4",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1",
-    "gh-pages": "^2.1.1"
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "tslib": "^2.8.1"
   }
 }
